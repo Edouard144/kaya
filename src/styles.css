@@ -1,0 +1,275 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap");
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Kaya / Provisto design tokens ──────────────────────────── */
+:root {
+  /* surfaces */
+  --background: #f7ecdf;            /* cream */
+  --surface: #fffaf3;               /* card surface */
+  --surface-alt: #f6ede4;
+  --foreground: #1a120e;            /* ink */
+  --ink-soft: #2a1f19;
+  --muted: rgba(26, 18, 14, 0.64);
+  --muted-foreground: rgba(26, 18, 14, 0.64);
+
+  /* brand */
+  --peach: #ecc6a6;
+  --peach-deep: #e3b18b;
+  --peach-soft: #f0d4b2;
+  --terracotta: #d97757;            /* primary CTA */
+  --terracotta-deep: #c86f4e;
+  --pink-soft: #ffb2c5;
+
+  /* lines & shadows */
+  --line: rgba(26, 18, 14, 0.1);
+  --line-strong: rgba(26, 18, 14, 0.18);
+  --shadow-warm: 0 30px 60px -20px rgba(70, 40, 25, 0.28);
+  --shadow-card: 0 1px 2px rgba(26, 18, 14, 0.04), 0 8px 24px -16px rgba(26, 18, 14, 0.18);
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-sm: 10px;
+
+  /* type */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Manrope", system-ui, -apple-system, sans-serif;
+
+  /* shadcn aliases */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: var(--terracotta);
+  --primary-foreground: #fffaf3;
+  --secondary: var(--peach-soft);
+  --secondary-foreground: var(--foreground);
+  --accent: var(--peach);
+  --accent-foreground: var(--foreground);
+  --destructive: #b3261e;
+  --destructive-foreground: #fffaf3;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--terracotta);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--terracotta);
+  --sidebar-primary-foreground: #fffaf3;
+  --sidebar-accent: var(--peach-soft);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--terracotta);
+  --chart-1: #d97757;
+  --chart-2: #ecc6a6;
+  --chart-3: #2a1f19;
+  --chart-4: #e3b18b;
+  --chart-5: #ffb2c5;
+}
+
+.dark {
+  --background: #14100d;
+  --surface: rgba(36, 26, 21, 0.98);
+  --surface-alt: #1c130e;
+  --foreground: #fdf3e4;
+  --ink-soft: #eadccd;
+  --muted: rgba(253, 243, 228, 0.62);
+  --muted-foreground: rgba(253, 243, 228, 0.62);
+  --line: rgba(255, 240, 225, 0.1);
+  --line-strong: rgba(255, 240, 225, 0.18);
+  --shadow-warm: 0 30px 60px -20px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -14px rgba(0, 0, 0, 0.55);
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --primary: #f0a880;
+  --primary-foreground: #14100d;
+  --secondary: rgba(255, 245, 232, 0.09);
+  --secondary-foreground: var(--foreground);
+  --accent: rgba(255, 245, 232, 0.05);
+  --accent-foreground: var(--foreground);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: #f0a880;
+}
+
+@theme inline {
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: calc(var(--radius-lg) + 6px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-ink: var(--foreground);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-peach: var(--peach);
+  --color-peach-deep: var(--peach-deep);
+  --color-peach-soft: var(--peach-soft);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-deep: var(--terracotta-deep);
+  --color-pink-soft: var(--pink-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --shadow-warm: var(--shadow-warm);
+  --shadow-card: var(--shadow-card);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+  ::selection { background: var(--terracotta); color: #fffaf3; }
+}
+
+@utility container-page {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+}
+
+@utility surface-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+@utility btn-primary {
+  background: var(--terracotta);
+  color: #fffaf3;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.btn-primary:hover { background: var(--terracotta-deep); }
+.btn-primary:active { transform: translateY(1px); }
+
+@utility btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem;
+  font-weight: 500;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.btn-ghost:hover { background: var(--surface); border-color: var(--foreground); }
+
+@utility field {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  font-family: var(--font-body);
+  color: var(--foreground);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field:focus { outline: none; border-color: var(--terracotta); box-shadow: 0 0 0 3px color-mix(in oklab, var(--terracotta) 22%, transparent); }
+
+/* ─── Theme variants (data-theme on <html>) ──────────────── */
+:root[data-theme="noir"] {
+  --background: #faf6ef;
+  --surface: #fffdf7;
+  --surface-alt: #f3ecdd;
+  --foreground: #1a1408;
+  --ink-soft: #2d2412;
+  --terracotta: #c9a84c;
+  --terracotta-deep: #a78a32;
+  --peach: #e7d8a7;
+  --peach-soft: #f3ead0;
+  --peach-deep: #d4be7a;
+  --pink-soft: #f0d78c;
+}
+:root[data-theme="ocean"] {
+  --background: #eef5f8;
+  --surface: #ffffff;
+  --surface-alt: #dfecf1;
+  --foreground: #0c2340;
+  --ink-soft: #1e3a5f;
+  --terracotta: #2d8a9e;
+  --terracotta-deep: #1f6e80;
+  --peach: #b8d4e8;
+  --peach-soft: #d6e7ef;
+  --peach-deep: #6ba3c8;
+  --pink-soft: #5cbdb9;
+}
+:root[data-theme="forest"] {
+  --background: #f3efe6;
+  --surface: #fbf8f1;
+  --surface-alt: #e7e2d1;
+  --foreground: #1a3c2a;
+  --ink-soft: #2d5a3d;
+  --terracotta: #5a8a5c;
+  --terracotta-deep: #436b46;
+  --peach: #c8dac1;
+  --peach-soft: #dde6d4;
+  --peach-deep: #a0c49d;
+  --pink-soft: #a8c0a0;
+}
+
+/* ─── Marquee (auto-scrolling category rows) ─────────────── */
+.kaya-marquee { mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+@keyframes kaya-marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.kaya-marquee-track {
+  width: max-content;
+  animation: kaya-marquee-x 60s linear infinite;
+}
+.kaya-marquee-track.kaya-marquee-reverse { animation-direction: reverse; }
+.kaya-marquee:hover .kaya-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .kaya-marquee-track { animation: none; }
+}
+
+
+
