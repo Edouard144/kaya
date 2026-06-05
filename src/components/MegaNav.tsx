@@ -23,7 +23,7 @@ export function MegaNav() {
     <header className="sticky top-0 z-40 border-b border-line/60 bg-background/85 backdrop-blur-xl">
       {/* top utility strip */}
       <div className="hidden border-b border-line/40 md:block">
-        <div className="container-page flex h-9 items-center justify-between text-[12px] text-muted-foreground">
+        <div className="flex h-9 w-full items-center justify-between px-6 text-[12px] text-muted-foreground xl:px-10">
           <div className="flex items-center gap-5">
             <span>📍 Tbilisi, Georgia</span>
             <span>🚚 Worldwide delivery</span>
@@ -37,7 +37,7 @@ export function MegaNav() {
       </div>
 
       {/* main nav row */}
-      <div className="container-page flex h-20 items-center gap-6">
+      <div className="flex h-20 w-full items-center gap-6 px-6 xl:px-10">
         <Logo />
 
         <nav className="ml-6 hidden items-center gap-1 lg:flex">
@@ -126,7 +126,7 @@ export function MegaNav() {
       {/* mobile drawer */}
       {mobileOpen && (
         <div className="border-t border-line bg-surface lg:hidden">
-          <div className="container-page space-y-1 py-4">
+          <div className="w-full space-y-1 px-6 py-4 xl:px-10">
             <MobileLink to="/">Home</MobileLink>
             <MobileLink to="/products">All Products</MobileLink>
             <details className="rounded-lg">
@@ -175,7 +175,7 @@ function MegaPanel({ children, onClose }: { children: React.ReactNode; onClose: 
   return (
     <>
       <div className="absolute inset-x-0 z-40 border-y border-line bg-background shadow-warm">
-        <div className="container-page py-8">{children}</div>
+        <div className="w-full px-6 py-8 xl:px-10">{children}</div>
       </div>
       <button onClick={onClose} aria-label="Close menu" className="fixed inset-0 top-20 z-30 cursor-default bg-foreground/10 backdrop-blur-[2px]" />
     </>

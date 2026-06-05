@@ -17,7 +17,7 @@ export function CategoryMarquee({ reverse = false }: { reverse?: boolean }) {
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-peach-soft/60">
               <img src={c.cover} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover/card:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-foreground/10" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-background">
                 <div className="text-[10px] uppercase tracking-[0.2em] opacity-80">{c.short}</div>
                 <div className="font-display text-xl">{c.name}</div>

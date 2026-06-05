@@ -98,7 +98,10 @@ export function HeroCarousel() {
                 className="absolute inset-0 h-full w-full object-cover"
                 fetchPriority={idx === 0 ? "high" : "auto"}
               />
-              <div className="absolute inset-0 bg-gradient-to-br from-background/85 via-background/40 to-background/80" />
+              {/* base dark scrim so bright images don't blow out */}
+              <div className="absolute inset-0 bg-foreground/30" />
+              {/* directional gradient for text legibility on the left/bottom */}
+              <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/55 to-background/70" />
               <div className="relative grid h-full gap-10 p-7 md:grid-cols-12 md:p-14">
                 <div className="flex flex-col justify-between md:col-span-7">
                   <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink-soft backdrop-blur">
