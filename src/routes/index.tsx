@@ -81,9 +81,9 @@ function Home() {
             >
               <div className={"relative overflow-hidden " + (i === 0 ? "aspect-[3/4] lg:aspect-auto lg:h-full" : "aspect-[5/4]")}>
                 <img src={c.cover} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-background">
-                  <div className="text-[11px] uppercase tracking-[0.2em] opacity-85">{c.short}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] opacity-100">{c.short}</div>
                   <div className="mt-1 font-display text-3xl">{c.name}</div>
                   <p className="mt-2 max-w-md text-sm opacity-85">{c.blurb}</p>
                   <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-background">

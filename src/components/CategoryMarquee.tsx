@@ -17,10 +17,10 @@ export function CategoryMarquee({ reverse = false }: { reverse?: boolean }) {
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-peach-soft/60">
               <img src={c.cover} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover/card:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-foreground/10" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 text-background">
-                <div className="text-[10px] uppercase tracking-[0.2em] opacity-80">{c.short}</div>
-                <div className="font-display text-xl">{c.name}</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/75 via-foreground/40 to-transparent p-4 text-background">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.2em] drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">{c.short}</div>
+                <div className="font-display text-xl drop-shadow-[0_1px_6px_rgba(0,0,0,0.7)]">{c.name}</div>
               </div>
               <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 text-foreground">
                 <ArrowUpRight className="h-4 w-4" />

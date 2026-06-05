@@ -99,21 +99,21 @@ export function HeroCarousel() {
                 fetchPriority={idx === 0 ? "high" : "auto"}
               />
               {/* base dark scrim so bright images don't blow out */}
-              <div className="absolute inset-0 bg-foreground/30" />
+              {/* <div className="absolute inset-0 bg-foreground/30" /> */}
               {/* directional gradient for text legibility on the left/bottom */}
-              <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/55 to-background/70" />
+              {/* <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/55 to-background/70" /> */}
               <div className="relative grid h-full gap-10 p-7 md:grid-cols-12 md:p-14">
                 <div className="flex flex-col justify-between md:col-span-7">
-                  <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink-soft backdrop-blur">
+                  <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-background/80 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink backdrop-blur-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-terracotta" />
                     {s.eyebrow}
                   </div>
                   <div>
-                    <h1 className="font-display text-5xl leading-[0.95] md:text-7xl lg:text-[5.5rem]">
+                    <h1 className="font-display text-5xl leading-[0.95] drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] md:text-7xl lg:text-[5.5rem]">
                       {s.title}<br />
-                      <span className="italic text-terracotta">{s.italic}</span>
+                      <span className="italic text-terracotta drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">{s.italic}</span>
                     </h1>
-                    <p className="mt-6 max-w-xl text-base text-ink-soft md:text-lg">{s.body}</p>
+                    <p className="mt-6 max-w-xl rounded-xl bg-background/60 px-4 py-3 text-base text-ink backdrop-blur-sm md:text-lg">{s.body}</p>
                     <div className="mt-8 flex flex-wrap gap-3">
                       <Link to={s.ctaTo} className="btn-primary inline-flex items-center gap-2">
                         {s.ctaLabel} <ArrowUpRight className="h-4 w-4" />
