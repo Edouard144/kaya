@@ -24,7 +24,7 @@ function Home() {
       <HeroCarousel />
 
       {/* trust strip */}
-      <section className="container-page pb-10">
+      <section className="w-full px-6 xl:px-10 pb-10">
         <div className="surface-card grid grid-cols-2 gap-2 p-4 md:grid-cols-4 md:p-6">
           {[
             { icon: Truck, label: "Worldwide delivery", note: "Pallets to single boxes" },
@@ -47,7 +47,7 @@ function Home() {
 
       {/* CATEGORIES — auto-scrolling marquees */}
       <section className="py-10">
-        <div className="container-page mb-6 flex items-end justify-between gap-4">
+        <div className="w-full px-6 xl:px-10 mb-6 flex items-end justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Browse the catalog</div>
             <h2 className="mt-2 font-display text-4xl md:text-5xl">Everything a hotel runs on</h2>
@@ -66,7 +66,7 @@ function Home() {
       </section>
 
       {/* Featured categories grid */}
-      <section className="container-page py-16">
+      <section className="w-full px-6 xl:px-10 py-16">
         <div className="mb-8">
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Featured collections</div>
           <h2 className="mt-2 font-display text-4xl md:text-5xl">Start where your project starts</h2>
@@ -97,7 +97,7 @@ function Home() {
       </section>
 
       {/* PRODUCTS FEATURED */}
-      <section className="container-page py-10">
+      <section className="w-full px-6 xl:px-10 py-10">
         <div className="mb-6 flex items-end justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">From the catalog</div>
@@ -124,7 +124,7 @@ function Home() {
       </section>
 
       {/* INDUSTRIES */}
-      <section className="container-page py-16">
+      <section className="w-full px-6 xl:px-10 py-16">
         <div className="surface-card grid gap-10 p-10 md:grid-cols-12 md:p-14">
           <div className="md:col-span-5">
             <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Who we serve</div>
@@ -149,7 +149,7 @@ function Home() {
       </section>
 
       {/* PROJECTS */}
-      <section className="container-page py-10">
+      <section className="w-full px-6 xl:px-10 py-10">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Worldwide projects</div>
@@ -174,7 +174,7 @@ function Home() {
       </section>
 
       {/* PARTNERS */}
-      <section className="container-page py-16">
+      <section className="w-full px-6 xl:px-10 py-16">
         <div className="text-center">
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Our partners</div>
           <h2 className="mt-2 font-display text-3xl md:text-4xl">Brands & properties we work with</h2>
@@ -189,7 +189,7 @@ function Home() {
       </section>
 
       {/* CTA */}
-      <section className="container-page pb-24">
+      <section className="w-full px-6 xl:px-10 pb-24">
         <div className="surface-card flex flex-col items-start gap-6 p-10 md:flex-row md:items-center md:justify-between md:p-14"
           style={{ backgroundImage: "linear-gradient(135deg, var(--peach-soft) 0%, var(--surface) 100%)" }}
         >

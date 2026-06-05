@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Phone, Search, Menu, X, FileText } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -9,15 +9,31 @@ import { useCart } from "@/lib/cart";
 const INDUSTRIES = ["Hotels","Resorts","Serviced Apartments","Restaurants","Hospitals","Schools","Offices"];
 const SERVICES = ["Supply","Installation","Interior Design","Hotel Setup Consultation","Maintenance"];
 
-type MenuKey = "products" | "industries" | "services" | null;
+type MenuKey = "products" | "industries" | "services";
 
 export function MegaNav() {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const [open, setOpen] = useState<MenuKey>(null);
+  const [open, setOpen] = useState<MenuKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { count } = useCart();
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Close on navigation
   useEffect(() => { setOpen(null); setMobileOpen(false); }, [path]);
+
+  const openMenu = (key: MenuKey) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(key);
+  };
+
+  // 150ms delay before closing — lets the mouse travel into the panel
+  const scheduleClose = () => {
+    closeTimer.current = setTimeout(() => setOpen(null), 150);
+  };
+
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/60 bg-background/85 backdrop-blur-xl">
@@ -40,17 +56,33 @@ export function MegaNav() {
       <div className="flex h-20 w-full items-center gap-6 px-6 xl:px-10">
         <Logo />
 
-        <nav className="ml-6 hidden items-center gap-1 lg:flex">
+        <nav className="mx-auto hidden items-center gap-1 lg:flex">
           <NavLink to="/" active={path === "/"}>Home</NavLink>
-          <DropdownTrigger label="Products" open={open === "products"} onToggle={() => setOpen(open === "products" ? null : "products")} />
-          <DropdownTrigger label="Industries" open={open === "industries"} onToggle={() => setOpen(open === "industries" ? null : "industries")} />
+
+          <DropdownTrigger
+            label="Products"
+            open={open === "products"}
+            onMouseEnter={() => openMenu("products")}
+            onMouseLeave={scheduleClose}
+          />
+          <DropdownTrigger
+            label="Industries"
+            open={open === "industries"}
+            onMouseEnter={() => openMenu("industries")}
+            onMouseLeave={scheduleClose}
+          />
           <NavLink to="/projects" active={path.startsWith("/projects")}>Projects</NavLink>
-          <DropdownTrigger label="Services" open={open === "services"} onToggle={() => setOpen(open === "services" ? null : "services")} />
+          <DropdownTrigger
+            label="Services"
+            open={open === "services"}
+            onMouseEnter={() => openMenu("services")}
+            onMouseLeave={scheduleClose}
+          />
           <NavLink to="/about" active={path.startsWith("/about")}>About</NavLink>
           <NavLink to="/contact" active={path.startsWith("/contact")}>Contact</NavLink>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Link to="/products" className="hidden h-10 w-10 items-center justify-center rounded-full border border-line hover:bg-surface md:flex" aria-label="Search">
             <Search className="h-4 w-4" />
           </Link>
@@ -70,9 +102,9 @@ export function MegaNav() {
         </div>
       </div>
 
-      {/* mega panels */}
+      {/* mega panels — each panel also extends the hover zone so mouse can travel into it */}
       {open === "products" && (
-        <MegaPanel onClose={() => setOpen(null)}>
+        <MegaPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
           <div className="grid gap-x-10 gap-y-3 md:grid-cols-3 lg:grid-cols-4">
             {categories.slice(0, 12).map((c) => (
               <div key={c.slug}>
@@ -95,8 +127,9 @@ export function MegaNav() {
           </div>
         </MegaPanel>
       )}
+
       {open === "industries" && (
-        <MegaPanel onClose={() => setOpen(null)}>
+        <MegaPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
           <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4">
             {INDUSTRIES.map((i) => (
               <Link key={i} to="/industries" className="surface-card flex items-center gap-3 p-4 hover:-translate-y-0.5 transition-transform">
@@ -107,8 +140,9 @@ export function MegaNav() {
           </div>
         </MegaPanel>
       )}
+
       {open === "services" && (
-        <MegaPanel onClose={() => setOpen(null)}>
+        <MegaPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {SERVICES.map((s) => (
               <Link key={s} to="/services" className="surface-card flex items-start gap-3 p-4">
@@ -162,23 +196,37 @@ function NavLink({ to, active, children }: { to: string; active: boolean; childr
   );
 }
 
-function DropdownTrigger({ label, open, onToggle }: { label: string; open: boolean; onToggle: () => void }) {
+function DropdownTrigger({ label, open, onMouseEnter, onMouseLeave }: {
+  label: string;
+  open: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
   return (
-    <button onClick={onToggle} className={"flex items-center gap-1 rounded-full px-3 py-2 text-sm transition-colors " + (open ? "bg-surface text-ink font-medium" : "text-ink-soft hover:bg-surface")}>
+    <button
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={"flex items-center gap-1 rounded-full px-3 py-2 text-sm transition-colors " + (open ? "bg-surface text-ink font-medium" : "text-ink-soft hover:bg-surface")}
+    >
       {label}
-      <ChevronDown className={"h-3.5 w-3.5 transition-transform " + (open ? "rotate-180" : "")} />
+      <ChevronDown className={"h-3.5 w-3.5 transition-transform duration-200 " + (open ? "rotate-180" : "")} />
     </button>
   );
 }
 
-function MegaPanel({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function MegaPanel({ children, onMouseEnter, onMouseLeave }: {
+  children: React.ReactNode;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
   return (
-    <>
-      <div className="absolute inset-x-0 z-40 border-y border-line bg-background shadow-warm">
-        <div className="w-full px-6 py-8 xl:px-10">{children}</div>
-      </div>
-      <button onClick={onClose} aria-label="Close menu" className="fixed inset-0 top-20 z-30 cursor-default bg-foreground/10 backdrop-blur-[2px]" />
-    </>
+    <div
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className="absolute inset-x-0 z-40 border-y border-line bg-background shadow-warm animate-in fade-in slide-in-from-top-2 duration-150"
+    >
+      <div className="w-full px-6 py-8 xl:px-10">{children}</div>
+    </div>
   );
 }
 
@@ -189,4 +237,3 @@ function MobileLink({ to, children }: { to: string; children: React.ReactNode })
     </Link>
   );
 }
-

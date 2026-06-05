@@ -7,7 +7,7 @@ export function Footer() {
   const cats = categories.slice(0, 10);
   return (
     <footer className="mt-24 border-t border-line/60 bg-surface-alt">
-      <div className="container-page grid gap-10 py-16 md:grid-cols-12">
+      <div className="w-full px-6 xl:px-10 grid gap-10 py-16 md:grid-cols-12">
         <div className="md:col-span-4">
           <Logo />
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
@@ -68,7 +68,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="container-page flex flex-col gap-2 border-t border-line/60 py-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
+      <div className="w-full px-6 xl:px-10 flex flex-col gap-2 border-t border-line/60 py-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
         <div>© {new Date().getFullYear()} Kaya Hotel Solutions. All rights reserved.</div>
         <div className="flex gap-4">
           <a href="#" className="hover:text-ink">Privacy</a>
