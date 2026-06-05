@@ -1,15 +1,11 @@
 /**
  * Post-build script: restructures Nitro's dist/ output into
- * Vercel's Build Output API format under .vercel/output/
+ * Vercel's Build Output API v3 format under .vercel/output/
  *
- * Vercel Build Output API v3:
- *   .vercel/output/config.json
- *   .vercel/output/static/       → served as static files automatically
- *   .vercel/output/functions/index.func/  → serverless function
- *
- * Route order matters:
- *   1. Check filesystem (static/) first — if found, serve it
- *   2. Otherwise fall through to SSR function
+ * Key points:
+ * - Static files go into .vercel/output/static/ and are served by Vercel CDN automatically
+ * - The SSR function is placed at functions/[[catchall]].func so it catches all unmatched paths
+ * - { handle: "filesystem" } MUST come before the catch-all route so assets are served statically
  */
 
 import { cpSync, mkdirSync, writeFileSync, rmSync } from "fs";
@@ -22,14 +18,15 @@ const out = join(root, ".vercel", "output");
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
-// 1. Copy static assets into .vercel/output/static/
-//    dist/client/assets/* → .vercel/output/static/assets/*
+// 1. Copy static assets → .vercel/output/static/
+//    dist/client/assets/* becomes accessible at /assets/*
 const staticDir = join(out, "static");
 mkdirSync(staticDir, { recursive: true });
 cpSync(join(root, "dist", "client"), staticDir, { recursive: true });
 
-// 2. Copy serverless function into .vercel/output/functions/index.func/
-const funcDir = join(out, "functions", "index.func");
+// 2. Copy serverless function into [[catchall]].func
+//    This name tells Vercel the function handles all paths
+const funcDir = join(out, "functions", "[[catchall]].func");
 mkdirSync(funcDir, { recursive: true });
 cpSync(join(root, "dist", "server"), funcDir, { recursive: true });
 
@@ -46,19 +43,21 @@ writeFileSync(
 );
 
 // 4. Write top-level config.json
-//    - filesystem check MUST come before the catch-all SSR route
-//    - this ensures /assets/styles.css is served from static/, not proxied to SSR
+//    Phase 1: { handle: "filesystem" } → Vercel checks static/ first
+//    Phase 2: any path not matched by a static file falls through to the SSR function
 writeFileSync(
   join(out, "config.json"),
   JSON.stringify({
     version: 3,
     routes: [
-      // Phase 1: serve files from static/ if they exist (filesystem check)
+      // Serve static files (assets/, images, etc.) directly from CDN
       { handle: "filesystem" },
-      // Phase 2: everything that didn't match a static file → SSR function
-      { src: "/(.*)", dest: "/index" },
+      // Everything else goes to the SSR function
+      { src: "/(.*)", dest: "/[[catchall]]" },
     ],
   }, null, 2)
 );
 
 console.log("✓ Vercel Build Output API structure created at .vercel/output/");
+console.log("  static/  →", join(out, "static"));
+console.log("  function →", join(out, "functions", "[[catchall]].func"));
