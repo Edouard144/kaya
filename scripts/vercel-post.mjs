@@ -8,7 +8,7 @@
  * - { handle: "filesystem" } MUST come before the catch-all route so assets are served statically
  */
 
-import { cpSync, mkdirSync, writeFileSync, rmSync } from "fs";
+import { cpSync, mkdirSync, writeFileSync, rmSync, existsSync } from "fs";
 import { join } from "path";
 
 const root = process.cwd();
@@ -23,6 +23,12 @@ mkdirSync(out, { recursive: true });
 const staticDir = join(out, "static");
 mkdirSync(staticDir, { recursive: true });
 cpSync(join(root, "dist", "client"), staticDir, { recursive: true });
+
+// 1b. Copy public/ folder → .vercel/output/static/ (favicon, etc.)
+const publicDir = join(root, "public");
+if (existsSync(publicDir)) {
+  cpSync(publicDir, staticDir, { recursive: true });
+}
 
 // 2. Copy serverless function into [[catchall]].func
 //    This name tells Vercel the function handles all paths
