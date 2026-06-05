@@ -78,14 +78,14 @@ export function HeroCarousel() {
   const go = (n: number) => { setI((n + slides.length) % slides.length); setAuto(false); };
 
   return (
-    <section className="container-page pt-6 pb-10 md:pt-10">
+    <section className="w-full pt-0 pb-0">
       <div
-        className="relative overflow-hidden rounded-[28px] border border-line/60 shadow-warm"
+        className="relative overflow-hidden border-b border-line/60 shadow-warm"
         onMouseEnter={() => setAuto(false)}
         onMouseLeave={() => setAuto(true)}
       >
         {/* slide stack */}
-        <div className="relative h-[640px] md:h-[680px]">
+        <div className="relative h-[70vh] min-h-[560px] md:h-[80vh] md:min-h-[640px]">
           {slides.map((s, idx) => (
             <div
               key={idx}
@@ -102,7 +102,7 @@ export function HeroCarousel() {
               {/* <div className="absolute inset-0 bg-foreground/30" /> */}
               {/* directional gradient for text legibility on the left/bottom */}
               {/* <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/55 to-background/70" /> */}
-              <div className="relative grid h-full gap-10 p-7 md:grid-cols-12 md:p-14">
+              <div className="relative grid h-full gap-10 px-6 py-10 md:grid-cols-12 md:px-10 md:py-14 xl:px-16">
                 <div className="flex flex-col justify-between md:col-span-7">
                   <div className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-background/80 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-ink backdrop-blur-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-terracotta" />
