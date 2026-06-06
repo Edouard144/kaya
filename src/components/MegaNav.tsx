@@ -15,18 +15,25 @@ export function MegaNav() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState<MenuKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { count } = useCart();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Close on navigation
   useEffect(() => { setOpen(null); setMobileOpen(false); }, [path]);
 
+  // Detect scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const openMenu = (key: MenuKey) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpen(key);
   };
 
-  // 150ms delay before closing — lets the mouse travel into the panel
   const scheduleClose = () => {
     closeTimer.current = setTimeout(() => setOpen(null), 150);
   };
@@ -36,67 +43,62 @@ export function MegaNav() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/60 bg-background/85 backdrop-blur-xl">
-      {/* top utility strip */}
-      <div className="hidden border-b border-line/40 md:block">
-        <div className="flex h-9 w-full items-center justify-between px-6 text-[12px] text-muted-foreground xl:px-10">
-          <div className="flex items-center gap-5">
-            <span>📍 Tbilisi, Georgia</span>
-            <span>🚚 Worldwide delivery</span>
-            <span>🏨 Trusted by 80+ properties</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <a href="tel:+995000000000" className="hover:text-ink">+995 000 000 000</a>
-            <a href="mailto:hello@kaya.rent" className="hover:text-ink">hello@kaya.rent</a>
-          </div>
-        </div>
-      </div>
-
-      {/* main nav row */}
-      <div className="flex h-20 w-full items-center gap-6 px-6 xl:px-10">
+    <header
+      className={
+        "sticky top-0 z-40 border-b transition-all duration-300 " +
+        (scrolled
+          ? "border-white/10 bg-foreground/50 backdrop-blur-xl shadow-lg"
+          : "border-line/60 bg-background/85 backdrop-blur-xl")
+      }
+    >
+      {/* main nav row — tightens on scroll */}
+      <div className={"flex w-full items-center gap-6 px-6 transition-all duration-300 xl:px-10 " + (scrolled ? "h-14" : "h-20")}>
         <Logo />
 
         <nav className="mx-auto hidden items-center gap-1 lg:flex">
-          <NavLink to="/" active={path === "/"}>Home</NavLink>
+          <NavLink to="/" active={path === "/"} scrolled={scrolled}>Home</NavLink>
 
           <DropdownTrigger
             label="Products"
             open={open === "products"}
+            scrolled={scrolled}
             onMouseEnter={() => openMenu("products")}
             onMouseLeave={scheduleClose}
           />
           <DropdownTrigger
             label="Industries"
             open={open === "industries"}
+            scrolled={scrolled}
             onMouseEnter={() => openMenu("industries")}
             onMouseLeave={scheduleClose}
           />
-          <NavLink to="/projects" active={path.startsWith("/projects")}>Projects</NavLink>
+          <NavLink to="/projects" active={path.startsWith("/projects")} scrolled={scrolled}>Projects</NavLink>
           <DropdownTrigger
             label="Services"
             open={open === "services"}
+            scrolled={scrolled}
             onMouseEnter={() => openMenu("services")}
             onMouseLeave={scheduleClose}
           />
-          <NavLink to="/about" active={path.startsWith("/about")}>About</NavLink>
-          <NavLink to="/contact" active={path.startsWith("/contact")}>Contact</NavLink>
+          <NavLink to="/about" active={path.startsWith("/about")} scrolled={scrolled}>About</NavLink>
+          <NavLink to="/contact" active={path.startsWith("/contact")} scrolled={scrolled}>Contact</NavLink>
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link to="/products" className="hidden h-10 w-10 items-center justify-center rounded-full border border-line hover:bg-surface md:flex" aria-label="Search">
+          <Link to="/products" className={"hidden h-10 w-10 items-center justify-center rounded-full border hover:bg-white/10 md:flex " + (scrolled ? "border-white/20 text-white/80" : "border-line")} aria-label="Search">
             <Search className="h-4 w-4" />
           </Link>
           <ThemeSwitcher />
-          <a href="tel:+995000000000" className="hidden h-10 items-center gap-2 rounded-full border border-line px-4 text-sm hover:bg-surface md:flex">
+          <a href="tel:+995000000000" className={"hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " + (scrolled ? "border-white/20 text-white/80 hover:bg-white/10" : "border-line hover:bg-surface")}>
             <Phone className="h-4 w-4" /> Call
           </a>
-          <Link to="/quote" className="hidden h-10 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-ink-soft md:flex">
+          <Link to="/quote" className="hidden h-10 items-center gap-2 rounded-full bg-terracotta px-5 text-sm font-medium text-white hover:bg-terracotta/90 md:flex">
             <FileText className="h-4 w-4" /> Request Quote
             {count > 0 && (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-terracotta px-1.5 text-[11px] font-semibold text-white">{count}</span>
+              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-[11px] font-semibold">{count}</span>
             )}
           </Link>
-          <button onClick={() => setMobileOpen((v) => !v)} className="flex h-10 w-10 items-center justify-center rounded-full border border-line lg:hidden" aria-label="Menu">
+          <button onClick={() => setMobileOpen((v) => !v)} className={"flex h-10 w-10 items-center justify-center rounded-full border lg:hidden " + (scrolled ? "border-white/20 text-white" : "border-line")} aria-label="Menu">
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
@@ -188,9 +190,13 @@ export function MegaNav() {
   );
 }
 
-function NavLink({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
+function NavLink({ to, active, scrolled, children }: { to: string; active: boolean; scrolled: boolean; children: React.ReactNode }) {
+  const base = "relative px-3 py-2 text-sm transition-colors ";
+  const color = scrolled
+    ? (active ? "text-white font-medium" : "text-white/70 hover:text-white")
+    : (active ? "text-ink font-medium" : "text-ink-soft hover:text-ink");
   return (
-    <Link to={to} className={"relative px-3 py-2 text-sm transition-colors " + (active ? "text-ink font-medium" : "text-ink-soft hover:text-ink")}>
+    <Link to={to} className={base + color}>
       {children}
       {active && (
         <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />
@@ -199,23 +205,22 @@ function NavLink({ to, active, children }: { to: string; active: boolean; childr
   );
 }
 
-function DropdownTrigger({ label, open, onMouseEnter, onMouseLeave }: {
+function DropdownTrigger({ label, open, scrolled, onMouseEnter, onMouseLeave }: {
   label: string;
   open: boolean;
+  scrolled: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
+  const base = "relative flex items-center gap-1 px-3 py-2 text-sm transition-colors ";
+  const color = scrolled
+    ? (open ? "text-white font-medium" : "text-white/70 hover:text-white")
+    : (open ? "text-ink font-medium" : "text-ink-soft hover:text-ink");
   return (
-    <button
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={"relative flex items-center gap-1 px-3 py-2 text-sm transition-colors " + (open ? "text-ink font-medium" : "text-ink-soft hover:text-ink")}
-    >
+    <button onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={base + color}>
       {label}
       <ChevronDown className={"h-3.5 w-3.5 transition-transform duration-200 " + (open ? "rotate-180" : "")} />
-      {open && (
-        <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />
-      )}
+      {open && <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />}
     </button>
   );
 }

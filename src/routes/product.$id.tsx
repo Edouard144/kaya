@@ -60,9 +60,18 @@ function ProductPage() {
 
           <div className="surface-card mt-6 p-5">
             <div className="font-display text-lg">Pricing</div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Available on quote. Volume tiers are tailored to your order size — typically priced for 10+, 50+, and 200+ units.
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{p.pricingNote}</p>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {p.tiers.map((tier, i) => (
+                <div key={tier} className="rounded-xl border border-line bg-background/60 p-3 text-center">
+                  <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                    {i === 0 ? "Standard" : i === 1 ? "Volume" : "Contract"}
+                  </div>
+                  <div className="mt-1 font-display text-sm text-ink">{tier}</div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">All pricing on request — submit a quote for a tailored offer within 48 hours.</p>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
