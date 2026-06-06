@@ -263,7 +263,7 @@
 }
 .kaya-marquee-track {
   width: max-content;
-  animation: kaya-marquee-x 60s linear infinite;
+  animation: kaya-marquee-x 120s linear infinite;
 }
 .kaya-marquee-track.kaya-marquee-reverse { animation-direction: reverse; }
 .kaya-marquee:hover .kaya-marquee-track { animation-play-state: paused; }

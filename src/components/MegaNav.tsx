@@ -190,8 +190,11 @@ export function MegaNav() {
 
 function NavLink({ to, active, children }: { to: string; active: boolean; children: React.ReactNode }) {
   return (
-    <Link to={to} className={"rounded-full px-3 py-2 text-sm transition-colors " + (active ? "bg-surface text-ink font-medium" : "text-ink-soft hover:bg-surface")}>
+    <Link to={to} className={"relative px-3 py-2 text-sm transition-colors " + (active ? "text-ink font-medium" : "text-ink-soft hover:text-ink")}>
       {children}
+      {active && (
+        <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />
+      )}
     </Link>
   );
 }
@@ -206,10 +209,13 @@ function DropdownTrigger({ label, open, onMouseEnter, onMouseLeave }: {
     <button
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={"flex items-center gap-1 rounded-full px-3 py-2 text-sm transition-colors " + (open ? "bg-surface text-ink font-medium" : "text-ink-soft hover:bg-surface")}
+      className={"relative flex items-center gap-1 px-3 py-2 text-sm transition-colors " + (open ? "text-ink font-medium" : "text-ink-soft hover:text-ink")}
     >
       {label}
       <ChevronDown className={"h-3.5 w-3.5 transition-transform duration-200 " + (open ? "rotate-180" : "")} />
+      {open && (
+        <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />
+      )}
     </button>
   );
 }
