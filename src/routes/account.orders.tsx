@@ -5,7 +5,7 @@ import { Orders, formatUSD, type OrderStatus } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/account/orders")({
-  head: () => ({ meta: [{ title: "My orders — Provisto" }] }),
+  head: () => ({ meta: [{ title: "My orders — Kaya" }] }),
   component: MyOrders,
 });
 

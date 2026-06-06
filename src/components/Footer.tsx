@@ -73,7 +73,6 @@ export function Footer() {
         <div className="flex gap-4">
           <a href="#" className="hover:text-ink">Privacy</a>
           <a href="#" className="hover:text-ink">Terms</a>
-          <a href="https://kaya.rent" className="hover:text-ink">kaya.rent</a>
         </div>
       </div>
     </footer>

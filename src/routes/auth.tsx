@@ -7,7 +7,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({
     redirect: typeof s.redirect === "string" ? s.redirect : "/",
   }),
-  head: () => ({ meta: [{ title: "Sign in — Provisto" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Kaya" }] }),
   component: AuthPage,
 });
 
@@ -46,7 +46,7 @@ function AuthPage() {
       <div className="grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-line bg-surface shadow-warm md:grid-cols-2">
         <div className="hidden flex-col justify-between bg-foreground p-12 text-background md:flex">
           <div className="flex items-center gap-2 font-display text-2xl">
-            <span className="text-terracotta">◆</span> provisto
+            <span className="text-terracotta">◆</span> Kaya
           </div>
           <div>
             <h1 className="font-display text-5xl italic leading-tight">
@@ -56,7 +56,7 @@ function AuthPage() {
               One account, every order. Bulk pricing applied automatically.
             </p>
           </div>
-          <div className="text-xs uppercase tracking-[0.18em] text-background/50">by kaya.rent</div>
+          <div className="text-xs uppercase tracking-[0.18em] text-background/50">Hotel Solutions</div>
         </div>
 
         <div className="p-10 md:p-12">

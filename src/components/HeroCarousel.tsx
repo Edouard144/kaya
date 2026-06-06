@@ -109,11 +109,11 @@ export function HeroCarousel() {
                     {s.eyebrow}
                   </div>
                   <div>
-                    <h1 className="font-display text-5xl leading-[0.95] drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] md:text-7xl lg:text-[5.5rem]">
+                    <h1 className="font-display text-5xl leading-[0.95] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] md:text-7xl lg:text-[5.5rem]">
                       {s.title}<br />
                       <span className="italic text-terracotta drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">{s.italic}</span>
                     </h1>
-                    <p className="mt-6 max-w-xl rounded-xl bg-background/60 px-4 py-3 text-base text-ink backdrop-blur-sm md:text-lg">{s.body}</p>
+                    <p className="mt-6 max-w-xl rounded-xl bg-black/40 px-4 py-3 text-base text-white backdrop-blur-sm md:text-lg">{s.body}</p>
                     <div className="mt-8 flex flex-wrap gap-3">
                       <Link to={s.ctaTo} className="btn-primary inline-flex items-center gap-2">
                         {s.ctaLabel} <ArrowUpRight className="h-4 w-4" />

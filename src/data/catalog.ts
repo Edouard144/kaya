@@ -16,6 +16,9 @@ import imgBathTowel from "@/assets/600gsm Bath Towel.jpg";
 import imgBathrobe from "@/assets/Waffle Bathrobe.jpg";
 import imgDuvet from "@/assets/All-Season King Duvet.jpg";
 import imgMarbleTub from "@/assets/Freestanding Marble Tub.jpg";
+import imgRainShower from "@/assets/Rain Shower System.jpg";
+import imgBacklitMirror from "@/assets/Backlit Vanity Mirror.jpg";
+import imgAmenitySet from "@/assets/Amenity Bottle Set.jpg";
 import imgDiningTable from "@/assets/Restaurant Dining Table.jpg";
 import imgWineGlass from "@/assets/Crystal Wine Glasses.jpg";
 import imgPlateSet from "@/assets/Porcelain Plate Set.jpg";
@@ -35,6 +38,19 @@ import imgRoomSafe from "@/assets/In-Room Electronic Safe.jpg";
 import imgWasher from "@/assets/25kg Industrial Washer.jpg";
 import imgHKTrolley from "@/assets/Housekeeping Trolley.jpg";
 import imgVacuum from "@/assets/Commercial Backpack Vacuum.jpg";
+
+// Commercial kitchen images
+import imgCombiOven from "@/assets/Convection Combi Oven.jpg";
+import imgReachInFridge from "@/assets/Reach-In Refrigerator.jpg";
+import imgHoodDishwasher from "@/assets/Hood-Type Dishwasher.jpg";
+import imgPrepTable from "@/assets/Stainless Prep Table.jpg";
+import imgGasRange from "@/assets/6-Burner Gas Range.jpg";
+
+// Swimming pool images
+import imgPoolPump from "@/assets/Variable Speed Pool Pump.jpg";
+import imgPoolFilter from "@/assets/Commercial Sand Filter.jpg";
+import imgPoolLight from "@/assets/Underwater LED Spotlight.jpg";
+import imgPoolCleaner from "@/assets/Robotic Pool Cleaner.jpg";
 
 // Real project images
 import imgTbilisiHotel from "@/assets/Tbilisi Boutique Hotel.jpg";
@@ -274,18 +290,40 @@ export const seedProducts: SeedProduct[] = [
     description: "Polished freestanding tub with brass mixer support.",
     pricingNote: "High-specification item — typically quoted individually or for suite-level rooms.",
     tiers: ["1–4 units", "5–19 units", "20+ units"] },
-  { id: "p-rain-shower", name: "Rain Shower System", category: "bathroom-solutions", image: bathroom,
+  { id: "p-rain-shower", name: "Rain Shower System", category: "bathroom-solutions", image: imgRainShower,
     description: "Brushed-brass overhead rain head with handheld diverter.",
     pricingNote: "Priced per system (head + diverter + valve). Volume tiers for full-floor fit-outs.",
     tiers: ["10+ systems", "50+ systems", "150+ systems"] },
-  { id: "p-mirror-led", name: "Backlit Vanity Mirror", category: "bathroom-solutions", image: bathroom,
+  { id: "p-mirror-led", name: "Backlit Vanity Mirror", category: "bathroom-solutions", image: imgBacklitMirror,
     description: "LED-backlit mirror with anti-fog and touch dimmer.",
     pricingNote: "Priced per unit. One per bathroom — quote scales linearly with room count.",
     tiers: ["10+ units", "50+ units", "200+ units"] },
-  { id: "p-amenity-set", name: "Amenity Bottle Set", category: "bathroom-solutions", image: bathroom,
+  { id: "p-amenity-set", name: "Amenity Bottle Set", category: "bathroom-solutions", image: imgAmenitySet,
     description: "Shampoo, conditioner and body wash refillable bottles.",
     pricingNote: "Priced per room set (3 bottles). Consumable refills quoted separately.",
     tiers: ["50+ sets", "200+ sets", "1 000+ sets"] },
+
+  // — Commercial Kitchen —
+  { id: "p-convection-oven", name: "Convection Combi Oven", category: "commercial-kitchen", image: imgCombiOven,
+    description: "10-tray combi oven with steam and convection modes, touchscreen control.",
+    pricingNote: "Quoted per unit. Kitchen layout and capacity planned per hotel F&B volume.",
+    tiers: ["1–2 units", "3–5 units", "6+ units"] },
+  { id: "p-reach-in-fridge", name: "Reach-In Refrigerator", category: "commercial-kitchen", image: imgReachInFridge,
+    description: "600L stainless steel reach-in, fan-forced cooling, -2°C to +8°C.",
+    pricingNote: "Priced per unit. Cold storage is quoted based on kitchen output and menu.",
+    tiers: ["2+ units", "6+ units", "15+ units"] },
+  { id: "p-dishwasher-ht", name: "Hood-Type Dishwasher", category: "commercial-kitchen", image: imgHoodDishwasher,
+    description: "High-temperature hood dishwasher, 60 racks/hour, WRAS approved.",
+    pricingNote: "Priced per machine. Sized by covers-per-service — quoted per project.",
+    tiers: ["1–2 units", "3–4 units", "5+ units"] },
+  { id: "p-prep-table", name: "Stainless Prep Table", category: "commercial-kitchen", image: imgPrepTable,
+    description: "304-grade stainless steel work table, 1800×700mm, under-shelf included.",
+    pricingNote: "Priced per table. Full kitchen fit-outs are quoted as complete station packages.",
+    tiers: ["4+ tables", "10+ tables", "25+ tables"] },
+  { id: "p-gas-range", name: "6-Burner Gas Range", category: "commercial-kitchen", image: imgGasRange,
+    description: "Heavy-duty 6-burner range with cast-iron grates and pilot ignition.",
+    pricingNote: "Priced per unit. Cooking suite layout quoted alongside extraction and ventilation.",
+    tiers: ["1–2 units", "3–5 units", "6+ units"] },
 
   // — Restaurant & Dining —
   { id: "p-dining-table", name: "Restaurant Dining Table", category: "restaurant-dining", image: imgDiningTable,
@@ -362,19 +400,19 @@ export const seedProducts: SeedProduct[] = [
     tiers: ["10+ units", "50+ units", "200+ units"] },
 
   // — Swimming Pool Equipment —
-  { id: "p-pool-pump", name: "Variable Speed Pool Pump", category: "swimming-pool", image: pool,
+  { id: "p-pool-pump", name: "Variable Speed Pool Pump", category: "swimming-pool", image: imgPoolPump,
     description: "Energy-efficient variable speed pump for pools up to 120m³, whisper-quiet operation.",
     pricingNote: "Priced per unit. Pump sizing is based on pool volume — quoted per project.",
     tiers: ["1–2 units", "3–6 units", "7+ units"] },
-  { id: "p-pool-filter", name: "Commercial Sand Filter", category: "swimming-pool", image: pool,
+  { id: "p-pool-filter", name: "Commercial Sand Filter", category: "swimming-pool", image: imgPoolFilter,
     description: "High-rate sand filter for hotel and resort pools, manual multiport valve included.",
     pricingNote: "Priced per filter. Typically paired with a pump — ask about system bundles.",
     tiers: ["1–2 units", "3–5 units", "6+ units"] },
-  { id: "p-pool-light", name: "Underwater LED Spotlight", category: "swimming-pool", image: pool,
+  { id: "p-pool-light", name: "Underwater LED Spotlight", category: "swimming-pool", image: imgPoolLight,
     description: "12V RGB underwater spotlight, colour-changeable with remote. IP68 rated.",
     pricingNote: "Priced per fitting. Pools typically use 4–20 lights depending on size and design.",
     tiers: ["4+ fittings", "12+ fittings", "40+ fittings"] },
-  { id: "p-pool-cleaner", name: "Robotic Pool Cleaner", category: "swimming-pool", image: pool,
+  { id: "p-pool-cleaner", name: "Robotic Pool Cleaner", category: "swimming-pool", image: imgPoolCleaner,
     description: "Autonomous robotic cleaner for floor, walls and waterline. 90-minute cycle.",
     pricingNote: "Priced per unit. One cleaner per pool is standard for hotel properties.",
     tiers: ["1–2 units", "3–5 units", "6+ units"] },

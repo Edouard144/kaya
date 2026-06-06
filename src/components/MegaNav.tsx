@@ -1,13 +1,28 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Phone, Search, Menu, X, FileText } from "lucide-react";
+import { ChevronDown, Phone, Search, Menu, X, FileText, Building2, UtensilsCrossed, Bed, GraduationCap, HeartPulse, Briefcase, Palmtree, Truck, Paintbrush, Wrench, ClipboardList, Star } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { categories } from "@/data/catalog";
 import { useCart } from "@/lib/cart";
 
-const INDUSTRIES = ["Hotels","Resorts","Serviced Apartments","Restaurants","Hospitals","Schools","Offices"];
-const SERVICES = ["Supply","Installation","Interior Design","Hotel Setup Consultation","Maintenance"];
+const INDUSTRIES = [
+  { name: "Hotels", desc: "Boutique to flagship full fit-outs", icon: Building2 },
+  { name: "Resorts", desc: "Pool, beach, grounds and rooms", icon: Palmtree },
+  { name: "Serviced Apartments", desc: "Move-in-ready packages per unit", icon: Bed },
+  { name: "Restaurants", desc: "Kitchen, dining and service", icon: UtensilsCrossed },
+  { name: "Hospitals", desc: "Furniture and consumables at scale", icon: HeartPulse },
+  { name: "Schools", desc: "Dorm, classroom and dining", icon: GraduationCap },
+  { name: "Offices", desc: "Reception, lounge and meeting", icon: Briefcase },
+];
+
+const SERVICES = [
+  { name: "Supply", desc: "Sourcing and delivery of any SKU, worldwide", icon: Truck },
+  { name: "Installation", desc: "On-site setup and commissioning by our teams", icon: Wrench },
+  { name: "Interior Design", desc: "Concept to specification for every space", icon: Paintbrush },
+  { name: "Hotel Setup Consultation", desc: "Pre-opening planning and procurement guidance", icon: ClipboardList },
+  { name: "Maintenance", desc: "Scheduled servicing and replacement programmes", icon: Star },
+];
 
 type MenuKey = "products" | "industries" | "services";
 
@@ -132,29 +147,66 @@ export function MegaNav() {
 
       {open === "industries" && (
         <MegaPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
-          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {INDUSTRIES.map((i) => (
-              <Link key={i} to="/industries" className="surface-card flex items-center gap-3 p-4 hover:-translate-y-0.5 transition-transform">
-                <span className="h-9 w-9 rounded-full bg-peach-soft/70 grid place-items-center text-terracotta font-display">◆</span>
-                <span className="text-sm font-medium">{i}</span>
-              </Link>
-            ))}
+          <div className="flex gap-10">
+            {/* left — industry list */}
+            <div className="flex-1">
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Who we serve</div>
+              <div className="grid grid-cols-2 gap-2">
+                {INDUSTRIES.map(({ name, desc, icon: Icon }) => (
+                  <Link key={name} to="/industries"
+                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface">
+                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-peach-soft/70 text-terracotta transition-colors group-hover:bg-terracotta group-hover:text-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <div className="text-sm font-medium text-ink">{name}</div>
+                      <div className="text-xs text-muted-foreground">{desc}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {/* right — CTA card */}
+            <div className="hidden w-64 shrink-0 lg:block">
+              <div className="h-full rounded-2xl bg-gradient-to-br from-terracotta/10 to-peach-soft/60 p-6">
+                <div className="font-display text-xl text-ink">Outfitting a property?</div>
+                <p className="mt-2 text-sm text-muted-foreground">Tell us your room count, location and timeline — we'll tailor a quote in 48 hours.</p>
+                <Link to="/quote" className="btn-primary mt-5 inline-flex text-sm">Get a quote →</Link>
+              </div>
+            </div>
           </div>
         </MegaPanel>
       )}
 
       {open === "services" && (
         <MegaPanel onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((s) => (
-              <Link key={s} to="/services" className="surface-card flex items-start gap-3 p-4">
-                <span className="mt-0.5 h-2 w-2 rounded-full bg-terracotta" />
-                <div>
-                  <div className="font-medium">{s}</div>
-                  <div className="text-xs text-muted-foreground">End-to-end delivery by Kaya teams.</div>
-                </div>
-              </Link>
-            ))}
+          <div className="flex gap-10">
+            {/* left — service list */}
+            <div className="flex-1">
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">What we do</div>
+              <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                {SERVICES.map(({ name, desc, icon: Icon }) => (
+                  <Link key={name} to="/services"
+                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface">
+                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-peach-soft/70 text-terracotta transition-colors group-hover:bg-terracotta group-hover:text-white">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <div className="text-sm font-medium text-ink">{name}</div>
+                      <div className="text-xs text-muted-foreground">{desc}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {/* right — CTA card */}
+            <div className="hidden w-64 shrink-0 lg:block">
+              <div className="h-full rounded-2xl bg-gradient-to-br from-terracotta/10 to-peach-soft/60 p-6">
+                <div className="font-display text-xl text-ink">End-to-end delivery</div>
+                <p className="mt-2 text-sm text-muted-foreground">From sourcing a single item to managing a full hotel opening — Kaya handles it all.</p>
+                <Link to="/contact" className="btn-primary mt-5 inline-flex text-sm">Talk to us →</Link>
+              </div>
+            </div>
           </div>
         </MegaPanel>
       )}

@@ -14,7 +14,7 @@ import {
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Provisto" }] }),
+  head: () => ({ meta: [{ title: "Admin — Kaya" }] }),
   component: AdminDashboard,
 });
 
@@ -54,7 +54,7 @@ function AdminDashboard() {
       <div>
         <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Admin</div>
         <h1 className="mt-2 font-display text-5xl md:text-6xl">Dashboard</h1>
-        <p className="mt-2 text-muted-foreground">Manage the Provisto catalog and customer orders.</p>
+        <p className="mt-2 text-muted-foreground">Manage the Kaya catalog and customer orders.</p>
       </div>
 
       <div className="mt-8 inline-flex rounded-full border border-line bg-surface p-1">

@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — Provisto" }] }),
+  head: () => ({ meta: [{ title: "Checkout — Kaya" }] }),
   component: CheckoutPage,
 });
 
