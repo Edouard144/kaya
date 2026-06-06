@@ -1,1 +1,0 @@
-import{j as t,L as n}from"./index-BJ9PO2dD.js";const e=()=>t.jsxs("div",{className:"container-page py-24 text-center",children:[t.jsx("h1",{className:"font-display text-4xl",children:"Category not found"}),t.jsx(n,{to:"/products",className:"btn-primary mt-6 inline-flex",children:"Browse catalog"})]});export{e as notFoundComponent};
