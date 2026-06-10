@@ -5,7 +5,10 @@ import { eq } from "drizzle-orm";
 import { hashPassword, verifyPassword, createToken } from "@/db/auth";
 
 export const login = createServerFn({ method: "POST" })
-  .inputValidator((data: { email: string; password: string }) => data)
+  .inputValidator((data: { email: string; password: string }) => ({
+    email: String(data.email ?? ""),
+    password: String(data.password ?? ""),
+  }))
   .handler(async ({ data }) => {
     const { email, password } = data;
 
@@ -44,7 +47,11 @@ export const login = createServerFn({ method: "POST" })
   });
 
 export const register = createServerFn({ method: "POST" })
-  .inputValidator((data: { name: string; email: string; password: string }) => data)
+  .inputValidator((data: { name: string; email: string; password: string }) => ({
+    name: String(data.name ?? ""),
+    email: String(data.email ?? ""),
+    password: String(data.password ?? ""),
+  }))
   .handler(async ({ data }) => {
     const { name, email, password } = data;
 

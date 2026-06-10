@@ -10,11 +10,13 @@ function getJwtSecret() {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+  const str = String(password ?? "");
+  if (!str) throw new Error("Password is required");
+  return bcrypt.hash(str, 12);
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+  return bcrypt.compare(String(password ?? ""), hash);
 }
 
 export async function createToken(payload: { userId: string; email: string; role: string }): Promise<string> {
