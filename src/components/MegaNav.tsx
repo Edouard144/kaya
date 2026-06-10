@@ -64,9 +64,18 @@ export function MegaNav() {
     setMobileOpen(false);
   }, [path]);
 
-  // Detect scroll
+  // Detect scroll — use hysteresis to prevent shake at threshold
+  const scrolledRef = useRef(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      const y = window.scrollY;
+      // Switch to scrolled at 40px, un-switch only below 5px
+      const next = y > 40 ? true : y < 5 ? false : scrolledRef.current;
+      if (next !== scrolledRef.current) {
+        scrolledRef.current = next;
+        setScrolled(next);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -96,8 +105,8 @@ export function MegaNav() {
       {/* main nav row — tightens on scroll */}
       <div
         className={
-          "flex w-full items-center gap-6 px-6 transition-all duration-300 xl:px-10 " +
-          (scrolled ? "h-14" : "h-20")
+          "flex w-full items-center gap-3 px-4 transition-all duration-300 sm:gap-6 sm:px-6 xl:px-10 " +
+          (scrolled ? "h-14" : "h-16 sm:h-20")
         }
       >
         <Logo />
@@ -139,22 +148,24 @@ export function MegaNav() {
           </NavLink>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             to="/products"
             className={
-              "hidden h-10 w-10 items-center justify-center rounded-full border hover:bg-white/10 md:flex " +
+              "hidden h-10 w-10 items-center justify-center rounded-full border hover:bg-white/10 lg:flex " +
               (scrolled ? "border-white/20 text-white/80" : "border-line")
             }
             aria-label="Search"
           >
             <Search className="h-4 w-4" />
           </Link>
-          <ThemeSwitcher />
+          <div className="hidden sm:block">
+            <ThemeSwitcher />
+          </div>
           <a
             href="tel:+995000000000"
             className={
-              "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+              "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm lg:flex " +
               (scrolled
                 ? "border-white/20 text-white/80 hover:bg-white/10"
                 : "border-line hover:bg-surface")
@@ -180,20 +191,20 @@ export function MegaNav() {
               to="/auth"
               search={{ redirect: "/" }}
               className={
-                "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+                "flex h-10 items-center gap-2 rounded-full border px-3 text-sm " +
                 (scrolled
                   ? "border-white/20 text-white/80 hover:bg-white/10"
                   : "border-line hover:bg-surface")
               }
             >
-              <User className="h-4 w-4" /> Sign in
+              <User className="h-4 w-4" /> <span className="hidden sm:inline">Sign in</span>
             </Link>
           )}
           <Link
             to="/quote"
-            className="hidden h-10 items-center gap-2 rounded-full bg-terracotta px-5 text-sm font-medium text-white hover:bg-terracotta/90 md:flex"
+            className="flex h-10 items-center gap-2 rounded-full bg-terracotta px-4 text-sm font-medium text-white hover:bg-terracotta/90 sm:px-5"
           >
-            <FileText className="h-4 w-4" /> Request Quote
+            <FileText className="h-4 w-4" /> <span className="hidden sm:inline">Request Quote</span>
           </Link>
           <button
             onClick={() => setMobileOpen((v) => !v)}
@@ -355,19 +366,6 @@ export function MegaNav() {
             <MobileLink to="/services">Services</MobileLink>
             <MobileLink to="/about">About</MobileLink>
             <MobileLink to="/contact">Contact</MobileLink>
-            {user ? (
-              <MobileLink to="/account/orders">My Account</MobileLink>
-            ) : (
-              <MobileLink to="/auth" search={{ redirect: "/" }}>
-                Sign in
-              </MobileLink>
-            )}
-            <Link
-              to="/quote"
-              className="mt-3 block w-full rounded-full bg-foreground py-3 text-center text-sm font-medium text-background"
-            >
-              Request Quote
-            </Link>
           </div>
         </div>
       )}

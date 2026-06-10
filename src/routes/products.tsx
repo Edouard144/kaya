@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, ArrowRight } from "lucide-react";
 import { formatUSD } from "@/lib/shopify";
 import { listPublicProducts, listCategories } from "@/lib/fns/products";
 
 export const Route = createFileRoute("/products")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+    categoryId: typeof s.categoryId === "string" ? s.categoryId : "",
+  }),
   head: () => ({
     meta: [
       { title: "All Products — Kaya" },
@@ -18,8 +22,9 @@ export const Route = createFileRoute("/products")({
 });
 
 function Catalog() {
-  const [q, setQ] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const { q, categoryId } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const selectedCategoryId = categoryId;
 
   const { data: dbProducts, isLoading } = useQuery({
     queryKey: ["public-products", q, selectedCategoryId],
@@ -67,8 +72,8 @@ function Catalog() {
         <div className="flex w-full max-w-md items-center gap-2 rounded-full border border-line bg-surface px-4 py-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
+            defaultValue={q}
+            onChange={(e) => navigate({ search: (prev) => ({ ...prev, q: e.target.value || undefined }) })}
             placeholder="Search towels, beds, lighting…"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
@@ -79,7 +84,7 @@ function Catalog() {
       {dbCategories && dbCategories.length > 0 && (
         <div className="mt-6 flex flex-wrap gap-2">
           <button
-            onClick={() => setSelectedCategoryId("")}
+            onClick={() => navigate({ search: (prev) => ({ ...prev, categoryId: undefined }) })}
             className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " +
               (!selectedCategoryId ? "bg-foreground text-background" : "border border-line hover:bg-surface")
             }
@@ -89,7 +94,7 @@ function Catalog() {
           {dbCategories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategoryId(selectedCategoryId === cat.id ? "" : cat.id)}
+              onClick={() => navigate({ search: (prev) => ({ ...prev, categoryId: prev.categoryId === cat.id ? undefined : cat.id }) })}
               className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " +
                 (selectedCategoryId === cat.id ? "bg-foreground text-background" : "border border-line hover:bg-surface")
               }

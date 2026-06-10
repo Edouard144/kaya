@@ -29,6 +29,11 @@ type ImageItem = {
 };
 
 export const Route = createFileRoute("/admin/dashboard")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    tab: s.tab === "add" ? "add" as const : "products" as const,
+    search: typeof s.search === "string" ? s.search : "",
+    edit: typeof s.edit === "string" ? s.edit : "",
+  }),
   head: () => ({ meta: [{ title: "Admin Dashboard — Kaya" }] }),
   component: Dashboard,
 });
@@ -39,15 +44,27 @@ function Dashboard() {
   const qc = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { tab: urlTab, search: urlSearch, edit: urlEdit } = Route.useSearch();
+
   useEffect(() => {
     if (!loading && (!user || user.role !== "admin")) {
       navigate({ to: "/admin" });
     }
   }, [loading, user, navigate]);
 
-  const [tab, setTab] = useState<"products" | "add">("products");
-  const [search, setSearch] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const setTab = (t: "products" | "add") => {
+    navigate({ search: (prev) => ({ ...prev, tab: t === "products" ? undefined : t, edit: undefined }) });
+  };
+  const setSearch = (val: string) => {
+    navigate({ search: (prev) => ({ ...prev, search: val || undefined }) });
+  };
+  const startEdit = (p: any) => {
+    navigate({ search: (prev) => ({ ...prev, tab: "add", edit: p.id }) });
+  };
+
+  const tab = urlTab;
+  const search = urlSearch;
+  const editingId = urlEdit || null;
 
   // Product form state
   const [formName, setFormName] = useState("");
@@ -70,6 +87,20 @@ function Dashboard() {
     queryFn: () => listCategories(),
     enabled: !!user && user.role === "admin",
   });
+
+  // Populate form from URL edit param on refresh
+  useEffect(() => {
+    if (editingId && products && !formName) {
+      const p = products.find((prod) => prod.id === editingId);
+      if (p) {
+        setFormName(p.name);
+        setFormDesc(p.description || "");
+        setFormPrice(p.price);
+        setFormStock(p.stock?.toString() || "");
+        setFormCategoryId(p.categoryId || "");
+      }
+    }
+  }, [editingId, products, formName]);
 
   // Load existing images when editing
   const { data: existingImages } = useQuery({
@@ -190,18 +221,16 @@ function Dashboard() {
     setFormCategoryId("");
     setFormImages([]);
     setFormErr(null);
-    setEditingId(null);
   };
 
-  const startEdit = (p: any) => {
-    setEditingId(p.id);
+  const startEditFn = (p: any) => {
     setFormName(p.name);
     setFormDesc(p.description || "");
     setFormPrice(p.price);
     setFormStock(p.stock?.toString() || "");
     setFormCategoryId(p.categoryId || "");
     setFormImages([]);
-    setTab("add");
+    startEdit(p);
   };
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -384,7 +413,7 @@ function Dashboard() {
                     Stock: {p.stock ?? "∞"}
                   </div>
                   <button
-                    onClick={() => startEdit(p)}
+                    onClick={() => startEditFn(p)}
                     className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium hover:bg-surface"
                   >
                     Edit

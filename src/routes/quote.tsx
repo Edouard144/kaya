@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Mail, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/quote")({
   head: () => ({
@@ -28,9 +28,9 @@ function QuotePage() {
     return (
       <div className="container-page py-24 text-center">
         <CheckCircle2 className="mx-auto h-14 w-14 text-terracotta" />
-        <h1 className="mt-4 font-display text-4xl">Quote request received</h1>
+        <h1 className="mt-4 font-display text-4xl">Quote request sent</h1>
         <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-          Thanks — a member of our team will be in touch within 48 hours with a tailored quote.
+          Thanks — we'll review your project and respond within 48 hours with a tailored quote.
         </p>
         <Link to="/" className="btn-primary mt-6 inline-flex">
           Back to home
@@ -38,6 +38,40 @@ function QuotePage() {
       </div>
     );
   }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+
+    const name = fd.get("name") || "";
+    const company = fd.get("company") || "";
+    const email = fd.get("email") || "";
+    const phone = fd.get("phone") || "";
+    const location = fd.get("location") || "";
+    const rooms = fd.get("rooms") || "";
+    const projectType = fd.get("projectType") || "";
+    const categories = fd.get("categories") || "";
+    const details = fd.get("details") || "";
+
+    const subject = encodeURIComponent(`Quote Request — ${company || name}`);
+    const body = encodeURIComponent(
+      `Hi Kaya team,\n\n` +
+      `I'd like to request a quote for the following project:\n\n` +
+      `Name: ${name}\n` +
+      `Company/Property: ${company}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone}\n` +
+      `Location: ${location}\n` +
+      `Number of rooms/units: ${rooms}\n` +
+      `Project type: ${projectType}\n` +
+      `Categories of interest: ${categories}\n\n` +
+      `Project details:\n${details}\n\n` +
+      `Best regards,\n${name}`
+    );
+
+    window.open(`mailto:edouardtuyubahe@gmail.com?subject=${subject}&body=${body}`, "_self");
+    setSent(true);
+  };
 
   return (
     <div className="container-page py-16">
@@ -50,36 +84,30 @@ function QuotePage() {
         obligation.
       </p>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSent(true);
-        }}
-        className="mt-10 grid gap-10 md:grid-cols-3"
-      >
-        <div className="surface-card space-y-4 p-6 md:col-span-2">
+      <div className="mt-10 grid gap-10 md:grid-cols-3">
+        <form onSubmit={handleSubmit} className="surface-card space-y-4 p-6 md:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Your name" required>
-              <input className="field" required />
+              <input name="name" className="field" required />
             </Field>
             <Field label="Company / property" required>
-              <input className="field" required />
+              <input name="company" className="field" required />
             </Field>
             <Field label="Email" required>
-              <input type="email" className="field" required />
+              <input name="email" type="email" className="field" required />
             </Field>
             <Field label="Phone">
-              <input className="field" />
+              <input name="phone" className="field" />
             </Field>
             <Field label="Country / city">
-              <input className="field" placeholder="Tbilisi, Georgia" />
+              <input name="location" className="field" placeholder="Tbilisi, Georgia" />
             </Field>
             <Field label="Number of rooms / units">
-              <input type="number" className="field" placeholder="80" />
+              <input name="rooms" type="number" className="field" placeholder="80" />
             </Field>
           </div>
           <Field label="Project type">
-            <select className="field" defaultValue="">
+            <select name="projectType" className="field" defaultValue="">
               <option value="">Select…</option>
               <option>New build hotel</option>
               <option>Renovation / refurbishment</option>
@@ -90,47 +118,51 @@ function QuotePage() {
           </Field>
           <Field label="Categories of interest">
             <textarea
+              name="categories"
               className="field min-h-[80px]"
               placeholder="e.g. Guest rooms, bathroom, lighting"
             />
           </Field>
           <Field label="Project details / timeline">
             <textarea
+              name="details"
               className="field min-h-[140px]"
               required
               placeholder="Tell us scope, target opening date, anything important…"
             />
           </Field>
-          <button className="btn-primary w-full">Send quote request</button>
-        </div>
+          <button type="submit" className="btn-primary w-full">
+            Send quote request
+          </button>
+        </form>
 
         <aside className="space-y-4">
-          <div className="surface-card p-5">
-            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              In your shortlist
+          <a
+            href="mailto:edouardtuyubahe@gmail.com"
+            className="surface-card flex items-center gap-4 p-5 transition-colors hover:bg-surface-alt"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta/10">
+              <Mail className="h-5 w-5 text-terracotta" />
             </div>
-            <div className="mt-2 font-display text-2xl">
-              {items.length} item{items.length === 1 ? "" : "s"}
+            <div>
+              <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Email us</div>
+              <div className="mt-0.5 text-sm font-medium">edouardtuyubahe@gmail.com</div>
             </div>
-            {items.length > 0 ? (
-              <ul className="mt-3 space-y-2 text-sm">
-                {items.slice(0, 6).map((i) => (
-                  <li key={i.productId} className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-terracotta" />
-                    <span className="truncate">{i.name}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">×{i.quantity}</span>
-                  </li>
-                ))}
-                {items.length > 6 && (
-                  <li className="text-xs text-muted-foreground">+ {items.length - 6} more</li>
-                )}
-              </ul>
-            ) : (
-              <p className="mt-2 text-sm text-muted-foreground">
-                You can also build a shortlist from product pages — items appear here automatically.
-              </p>
-            )}
-          </div>
+          </a>
+          <a
+            href="https://wa.me/995595213021"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="surface-card flex items-center gap-4 p-5 transition-colors hover:bg-surface-alt"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-500/10">
+              <MessageCircle className="h-5 w-5 text-green-600" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">WhatsApp</div>
+              <div className="mt-0.5 text-sm font-medium">+995 595 21 30 21</div>
+            </div>
+          </a>
           <div className="surface-card p-5 text-sm text-ink-soft">
             <div className="font-display text-lg">What happens next</div>
             <ol className="mt-3 list-decimal space-y-1.5 pl-4">
@@ -140,7 +172,7 @@ function QuotePage() {
             </ol>
           </div>
         </aside>
-      </form>
+      </div>
     </div>
   );
 }
