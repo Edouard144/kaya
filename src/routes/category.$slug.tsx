@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
-import { categories, productsByCategory } from "@/data/catalog";
+import { categories } from "@/data/catalog";
 import { listCategories, listPublicProducts } from "@/lib/fns/products";
 import { formatUSD } from "@/lib/shopify";
 
@@ -47,14 +47,11 @@ function CategoryPage() {
 
   const isLoading = catsLoading || productsLoading;
 
-  // Fallback to static
   const staticCategory = categories.find((x) => x.slug === slug);
-  const staticProducts = staticCategory ? productsByCategory(slug) : [];
 
   const categoryName = matchedCategory?.name || staticCategory?.name || slug;
   const categoryDescription = staticCategory?.blurb || "";
   const categoryImage = staticCategory?.cover || null;
-  const subcategories = staticCategory?.subcategories || [];
   const products = dbProducts ?? [];
   const related = dbCategories?.filter((x) => x.slug !== slug).slice(0, 4)
     ?? categories.filter((x) => x.slug !== slug).slice(0, 4);
@@ -104,30 +101,15 @@ function CategoryPage() {
         </div>
       </section>
 
-      {/* subcategory chips (static only) */}
-      {subcategories.length > 0 && (
-        <section className="container-page py-10">
-          <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Included in this category</div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {subcategories.map((s: string) => (
-              <span key={s} className="rounded-full border border-line bg-surface px-4 py-1.5 text-sm text-ink-soft">
-                {s}
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* products */}
       <section className="container-page pb-16">
         <div className="mb-6 flex items-end justify-between">
           <h2 className="font-display text-3xl md:text-4xl">Products</h2>
           <span className="text-sm text-muted-foreground">
-            {products.length > 0 ? `${products.length} items` : `${staticProducts.length} items`}
+            {products.length} items
           </span>
         </div>
 
-        {/* DB products */}
         {products.length > 0 && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p) => (
@@ -154,29 +136,7 @@ function CategoryPage() {
           </div>
         )}
 
-        {/* Static products fallback */}
-        {products.length === 0 && staticProducts.length > 0 && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {staticProducts.map((p) => (
-              <Link
-                key={p.id}
-                to="/product/$id"
-                params={{ id: p.id }}
-                className="surface-card group overflow-hidden transition-transform hover:-translate-y-1"
-              >
-                <div className="flex h-64 items-center justify-center bg-peach-soft/40 p-3">
-                  <img src={p.image} alt={p.name} loading="lazy" className="max-h-full w-auto object-contain transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <div className="space-y-1 p-5">
-                  <h3 className="font-display text-lg">{p.name}</h3>
-                  <p className="line-clamp-2 text-sm text-muted-foreground">{p.description}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {products.length === 0 && staticProducts.length === 0 && (
+        {products.length === 0 && (
           <div className="surface-card p-10 text-center">
             <p className="text-muted-foreground">
               No products in this category yet — request a quote and we'll source for your project.
