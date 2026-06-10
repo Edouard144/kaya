@@ -1,22 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/quote")({
   head: () => ({
     meta: [
       { title: "Request a Quote — Kaya" },
-      { name: "description", content: "Tell us about your hotel project — Kaya responds with a tailored quote within 48 hours." },
+      {
+        name: "description",
+        content:
+          "Tell us about your hotel project — Kaya responds with a tailored quote within 48 hours.",
+      },
       { property: "og:title", content: "Request a Quote — Kaya" },
-      { property: "og:description", content: "Tailored hospitality supply quotes within 48 hours." },
+      {
+        property: "og:description",
+        content: "Tailored hospitality supply quotes within 48 hours.",
+      },
     ],
   }),
   component: QuotePage,
 });
 
 function QuotePage() {
-  const { items, clear } = useCart();
   const [sent, setSent] = useState(false);
 
   if (sent) {
@@ -27,32 +32,51 @@ function QuotePage() {
         <p className="mx-auto mt-3 max-w-md text-muted-foreground">
           Thanks — a member of our team will be in touch within 48 hours with a tailored quote.
         </p>
-        <Link to="/" className="btn-primary mt-6 inline-flex">Back to home</Link>
+        <Link to="/" className="btn-primary mt-6 inline-flex">
+          Back to home
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="container-page py-16">
-      <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Request a quote</div>
+      <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+        Request a quote
+      </div>
       <h1 className="mt-2 font-display text-5xl md:text-6xl">Tell us about your project</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">
-        Share a few details and we'll respond within 48 hours with a tailored proposal —
-        no obligation.
+        Share a few details and we'll respond within 48 hours with a tailored proposal — no
+        obligation.
       </p>
 
       <form
-        onSubmit={(e) => { e.preventDefault(); setSent(true); clear(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setSent(true);
+        }}
         className="mt-10 grid gap-10 md:grid-cols-3"
       >
         <div className="surface-card space-y-4 p-6 md:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Your name" required><input className="field" required /></Field>
-            <Field label="Company / property" required><input className="field" required /></Field>
-            <Field label="Email" required><input type="email" className="field" required /></Field>
-            <Field label="Phone"><input className="field" /></Field>
-            <Field label="Country / city"><input className="field" placeholder="Tbilisi, Georgia" /></Field>
-            <Field label="Number of rooms / units"><input type="number" className="field" placeholder="80" /></Field>
+            <Field label="Your name" required>
+              <input className="field" required />
+            </Field>
+            <Field label="Company / property" required>
+              <input className="field" required />
+            </Field>
+            <Field label="Email" required>
+              <input type="email" className="field" required />
+            </Field>
+            <Field label="Phone">
+              <input className="field" />
+            </Field>
+            <Field label="Country / city">
+              <input className="field" placeholder="Tbilisi, Georgia" />
+            </Field>
+            <Field label="Number of rooms / units">
+              <input type="number" className="field" placeholder="80" />
+            </Field>
           </div>
           <Field label="Project type">
             <select className="field" defaultValue="">
@@ -65,18 +89,29 @@ function QuotePage() {
             </select>
           </Field>
           <Field label="Categories of interest">
-            <textarea className="field min-h-[80px]" placeholder="e.g. Guest rooms, bathroom, lighting" />
+            <textarea
+              className="field min-h-[80px]"
+              placeholder="e.g. Guest rooms, bathroom, lighting"
+            />
           </Field>
           <Field label="Project details / timeline">
-            <textarea className="field min-h-[140px]" required placeholder="Tell us scope, target opening date, anything important…" />
+            <textarea
+              className="field min-h-[140px]"
+              required
+              placeholder="Tell us scope, target opening date, anything important…"
+            />
           </Field>
           <button className="btn-primary w-full">Send quote request</button>
         </div>
 
         <aside className="space-y-4">
           <div className="surface-card p-5">
-            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">In your shortlist</div>
-            <div className="mt-2 font-display text-2xl">{items.length} item{items.length === 1 ? "" : "s"}</div>
+            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              In your shortlist
+            </div>
+            <div className="mt-2 font-display text-2xl">
+              {items.length} item{items.length === 1 ? "" : "s"}
+            </div>
             {items.length > 0 ? (
               <ul className="mt-3 space-y-2 text-sm">
                 {items.slice(0, 6).map((i) => (
@@ -86,7 +121,9 @@ function QuotePage() {
                     <span className="ml-auto text-xs text-muted-foreground">×{i.quantity}</span>
                   </li>
                 ))}
-                {items.length > 6 && <li className="text-xs text-muted-foreground">+ {items.length - 6} more</li>}
+                {items.length > 6 && (
+                  <li className="text-xs text-muted-foreground">+ {items.length - 6} more</li>
+                )}
               </ul>
             ) : (
               <p className="mt-2 text-sm text-muted-foreground">
@@ -108,7 +145,15 @@ function QuotePage() {
   );
 }
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -118,4 +163,3 @@ function Field({ label, required, children }: { label: string; required?: boolea
     </label>
   );
 }
-

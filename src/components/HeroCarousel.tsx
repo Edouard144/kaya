@@ -75,7 +75,10 @@ export function HeroCarousel() {
     return () => clearInterval(t);
   }, [auto]);
 
-  const go = (n: number) => { setI((n + slides.length) % slides.length); setAuto(false); };
+  const go = (n: number) => {
+    setI((n + slides.length) % slides.length);
+    setAuto(false);
+  };
 
   return (
     <section className="w-full pt-0 pb-0">
@@ -89,7 +92,10 @@ export function HeroCarousel() {
           {slides.map((s, idx) => (
             <div
               key={idx}
-              className={"absolute inset-0 transition-opacity duration-1000 " + (idx === i ? "opacity-100" : "opacity-0 pointer-events-none")}
+              className={
+                "absolute inset-0 transition-opacity duration-1000 " +
+                (idx === i ? "opacity-100" : "opacity-0 pointer-events-none")
+              }
               aria-hidden={idx !== i}
             >
               <img
@@ -110,21 +116,31 @@ export function HeroCarousel() {
                   </div>
                   <div>
                     <h1 className="font-display text-5xl leading-[0.95] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] md:text-7xl lg:text-[5.5rem]">
-                      {s.title}<br />
-                      <span className="italic text-terracotta drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">{s.italic}</span>
+                      {s.title}
+                      <br />
+                      <span className="italic text-terracotta drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+                        {s.italic}
+                      </span>
                     </h1>
-                    <p className="mt-6 max-w-xl rounded-xl bg-black/40 px-4 py-3 text-base text-white backdrop-blur-sm md:text-lg">{s.body}</p>
+                    <p className="mt-6 max-w-xl rounded-xl bg-black/40 px-4 py-3 text-base text-white backdrop-blur-sm md:text-lg">
+                      {s.body}
+                    </p>
                     <div className="mt-8 flex flex-wrap gap-3">
                       <Link to={s.ctaTo} className="btn-primary inline-flex items-center gap-2">
                         {s.ctaLabel} <ArrowUpRight className="h-4 w-4" />
                       </Link>
-                      <Link to="/quote" className="btn-ghost">Request a quote</Link>
+                      <Link to="/quote" className="btn-ghost">
+                        Request a quote
+                      </Link>
                     </div>
                   </div>
                 </div>
                 <div className="hidden flex-col justify-end md:col-span-5 md:flex">
                   <div className="surface-card p-5">
-                    <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Featured set · {String(idx + 1).padStart(2, "0")} of {String(slides.length).padStart(2, "0")}</div>
+                    <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      Featured set · {String(idx + 1).padStart(2, "0")} of{" "}
+                      {String(slides.length).padStart(2, "0")}
+                    </div>
                     <div className="mt-2 font-display text-2xl">{s.eyebrow}</div>
                     <p className="mt-1 text-sm text-muted-foreground">{s.body.slice(0, 100)}…</p>
                   </div>
@@ -159,7 +175,10 @@ export function HeroCarousel() {
               key={idx}
               onClick={() => go(idx)}
               aria-label={`Slide ${idx + 1}`}
-              className={"h-1.5 rounded-full transition-all " + (idx === i ? "w-10 bg-terracotta" : "w-5 bg-foreground/25 hover:bg-foreground/45")}
+              className={
+                "h-1.5 rounded-full transition-all " +
+                (idx === i ? "w-10 bg-terracotta" : "w-5 bg-foreground/25 hover:bg-foreground/45")
+              }
             />
           ))}
         </div>
@@ -167,4 +186,3 @@ export function HeroCarousel() {
     </section>
   );
 }
-

@@ -11,7 +11,15 @@ export function Logo({ className = "" }: { className?: string }) {
             "linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-deep) 60%, var(--foreground) 100%)",
         }}
       >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M6 4v16" />
           <path d="M6 12 L18 4" />
           <path d="M10 12 L18 20" />
@@ -26,4 +34,3 @@ export function Logo({ className = "" }: { className?: string }) {
     </Link>
   );
 }
-

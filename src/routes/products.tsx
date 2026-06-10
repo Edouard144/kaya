@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Search, ArrowRight } from "lucide-react";
-import { categories, seedProducts } from "@/data/catalog";
+import { formatUSD } from "@/lib/shopify";
+import { listPublicProducts, listCategories } from "@/lib/fns/products";
 
 export const Route = createFileRoute("/products")({
   head: () => ({
@@ -17,20 +19,40 @@ export const Route = createFileRoute("/products")({
 
 function Catalog() {
   const [q, setQ] = useState("");
-  const filteredCats = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    if (!needle) return categories;
-    return categories.filter((c) =>
-      c.name.toLowerCase().includes(needle) ||
-      c.short.toLowerCase().includes(needle) ||
-      c.subcategories.some((s) => s.toLowerCase().includes(needle)),
-    );
-  }, [q]);
-  const filteredProducts = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    if (!needle) return [];
-    return seedProducts.filter((p) => p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle));
-  }, [q]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+
+  const { data: dbProducts, isLoading } = useQuery({
+    queryKey: ["public-products", q, selectedCategoryId],
+    queryFn: () => listPublicProducts({
+      data: {
+        search: q.trim() || undefined,
+        categoryId: selectedCategoryId || undefined,
+      },
+    }),
+  });
+
+  const { data: dbCategories } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: () => listCategories(),
+  });
+
+  // Group products by category
+  const productsByCategory = useMemo(() => {
+    if (!dbProducts?.length) return [];
+    const map = new Map<string, { name: string; slug: string; products: typeof dbProducts }>();
+    for (const p of dbProducts) {
+      const key = p.categoryId || "__uncategorized";
+      if (!map.has(key)) {
+        map.set(key, {
+          name: p.categoryName || "Uncategorized",
+          slug: p.categorySlug || "uncategorized",
+          products: [],
+        });
+      }
+      map.get(key)!.products.push(p);
+    }
+    return Array.from(map.values());
+  }, [dbProducts]);
 
   return (
     <div className="container-page py-12">
@@ -39,7 +61,7 @@ function Catalog() {
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Catalog</div>
           <h1 className="mt-2 font-display text-5xl md:text-6xl">Hotel supplies</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            22 categories, 500+ SKUs — search by item or browse by category.
+            {dbProducts?.length ?? 0} products — search by item or browse by category.
           </p>
         </div>
         <div className="flex w-full max-w-md items-center gap-2 rounded-full border border-line bg-surface px-4 py-2">
@@ -53,18 +75,60 @@ function Catalog() {
         </div>
       </div>
 
-      {q && filteredProducts.length > 0 && (
+      {/* Category filters */}
+      {dbCategories && dbCategories.length > 0 && (
+        <div className="mt-6 flex flex-wrap gap-2">
+          <button
+            onClick={() => setSelectedCategoryId("")}
+            className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " +
+              (!selectedCategoryId ? "bg-foreground text-background" : "border border-line hover:bg-surface")
+            }
+          >
+            All
+          </button>
+          {dbCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategoryId(selectedCategoryId === cat.id ? "" : cat.id)}
+              className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " +
+                (selectedCategoryId === cat.id ? "bg-foreground text-background" : "border border-line hover:bg-surface")
+              }
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Loading state */}
+      {isLoading && (
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="surface-card h-72 animate-pulse bg-peach-soft/30" />
+          ))}
+        </div>
+      )}
+
+      {/* Search results */}
+      {!isLoading && q && dbProducts && dbProducts.length > 0 && (
         <div className="mt-10">
-          <h2 className="font-display text-2xl">Matching products</h2>
+          <h2 className="font-display text-2xl">Matching products ({dbProducts.length})</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {filteredProducts.map((p) => (
-              <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="surface-card group overflow-hidden transition-transform hover:-translate-y-1">
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            {dbProducts.map((p) => (
+              <Link key={p.id} to="/product/$id" params={{ id: p.slug }} className="surface-card group overflow-hidden transition-transform hover:-translate-y-1">
+                <div className="flex h-64 items-center justify-center bg-peach-soft/40 p-3">
+                  {p.image ? (
+                    <img src={p.image} alt={p.name} loading="lazy" className="max-h-full w-auto object-contain transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <div className="grid h-full w-full place-items-center font-display text-4xl text-terracotta/30">◆</div>
+                  )}
                 </div>
                 <div className="p-4">
                   <div className="font-display text-base">{p.name}</div>
-                  <p className="line-clamp-1 text-xs text-muted-foreground">{p.description}</p>
+                  <p className="mt-0.5 text-sm font-medium text-terracotta">{formatUSD(p.price)}</p>
+                  {p.categoryName && (
+                    <p className="mt-1 text-xs text-muted-foreground">{p.categoryName}</p>
+                  )}
                 </div>
               </Link>
             ))}
@@ -72,25 +136,54 @@ function Catalog() {
         </div>
       )}
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredCats.map((c) => (
-          <Link key={c.slug} to="/category/$slug" params={{ slug: c.slug }} className="surface-card group overflow-hidden transition-transform hover:-translate-y-1">
-            <div className="relative aspect-[5/3] overflow-hidden bg-peach-soft/60">
-              <img src={c.cover} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/75 via-foreground/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 text-background">
-                <div className="text-[11px] uppercase tracking-[0.18em] opacity-85">{c.short}</div>
-                <div className="font-display text-2xl">{c.name}</div>
+      {/* Empty search */}
+      {!isLoading && q && dbProducts?.length === 0 && (
+        <div className="mt-10 text-center py-16">
+          <div className="font-display text-2xl text-muted-foreground">No products found</div>
+          <p className="mt-2 text-sm text-muted-foreground">Try a different search term.</p>
+        </div>
+      )}
+
+      {/* Products grouped by category */}
+      {!isLoading && !q && productsByCategory.length > 0 && (
+        <div className="mt-12 space-y-12">
+          {productsByCategory.map((group) => (
+            <div key={group.slug}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-2xl">{group.name}</h2>
+                <Link to="/category/$slug" params={{ slug: group.slug }} className="flex items-center gap-1 text-sm text-terracotta hover:underline">
+                  View all <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {group.products.slice(0, 4).map((p) => (
+                  <Link key={p.id} to="/product/$id" params={{ id: p.slug }} className="surface-card group overflow-hidden transition-transform hover:-translate-y-1">
+                    <div className="flex h-64 items-center justify-center bg-peach-soft/40 p-3">
+                      {p.image ? (
+                        <img src={p.image} alt={p.name} loading="lazy" className="max-h-full w-auto object-contain transition-transform duration-700 group-hover:scale-105" />
+                      ) : (
+                        <div className="grid h-full w-full place-items-center font-display text-4xl text-terracotta/30">◆</div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="font-display text-base">{p.name}</div>
+                      <p className="mt-0.5 text-sm font-medium text-terracotta">{formatUSD(p.price)}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
-            <div className="flex items-center justify-between p-5">
-              <p className="line-clamp-2 max-w-sm text-sm text-muted-foreground">{c.blurb}</p>
-              <ArrowRight className="h-4 w-4 text-terracotta" />
-            </div>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!isLoading && !q && dbProducts?.length === 0 && (
+        <div className="mt-12 text-center py-24">
+          <div className="font-display text-3xl text-muted-foreground">No products yet</div>
+          <p className="mt-2 text-muted-foreground">Products added by the admin will appear here.</p>
+        </div>
+      )}
     </div>
   );
 }
-

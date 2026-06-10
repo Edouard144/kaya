@@ -1,10 +1,30 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Phone, Search, Menu, X, FileText, Building2, UtensilsCrossed, Bed, GraduationCap, HeartPulse, Briefcase, Palmtree, Truck, Paintbrush, Wrench, ClipboardList, Star } from "lucide-react";
+import {
+  ChevronDown,
+  Phone,
+  Search,
+  Menu,
+  X,
+  FileText,
+  Building2,
+  UtensilsCrossed,
+  Bed,
+  GraduationCap,
+  HeartPulse,
+  Briefcase,
+  Palmtree,
+  Truck,
+  Paintbrush,
+  Wrench,
+  ClipboardList,
+  Star,
+  User,
+} from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { categories } from "@/data/catalog";
-import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
 
 const INDUSTRIES = [
   { name: "Hotels", desc: "Boutique to flagship full fit-outs", icon: Building2 },
@@ -20,7 +40,11 @@ const SERVICES = [
   { name: "Supply", desc: "Sourcing and delivery of any SKU, worldwide", icon: Truck },
   { name: "Installation", desc: "On-site setup and commissioning by our teams", icon: Wrench },
   { name: "Interior Design", desc: "Concept to specification for every space", icon: Paintbrush },
-  { name: "Hotel Setup Consultation", desc: "Pre-opening planning and procurement guidance", icon: ClipboardList },
+  {
+    name: "Hotel Setup Consultation",
+    desc: "Pre-opening planning and procurement guidance",
+    icon: ClipboardList,
+  },
   { name: "Maintenance", desc: "Scheduled servicing and replacement programmes", icon: Star },
 ];
 
@@ -31,11 +55,14 @@ export function MegaNav() {
   const [open, setOpen] = useState<MenuKey | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { count } = useCart();
+  const { user } = useAuth();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Close on navigation
-  useEffect(() => { setOpen(null); setMobileOpen(false); }, [path]);
+  useEffect(() => {
+    setOpen(null);
+    setMobileOpen(false);
+  }, [path]);
 
   // Detect scroll
   useEffect(() => {
@@ -67,11 +94,18 @@ export function MegaNav() {
       }
     >
       {/* main nav row — tightens on scroll */}
-      <div className={"flex w-full items-center gap-6 px-6 transition-all duration-300 xl:px-10 " + (scrolled ? "h-14" : "h-20")}>
+      <div
+        className={
+          "flex w-full items-center gap-6 px-6 transition-all duration-300 xl:px-10 " +
+          (scrolled ? "h-14" : "h-20")
+        }
+      >
         <Logo />
 
         <nav className="mx-auto hidden items-center gap-1 lg:flex">
-          <NavLink to="/" active={path === "/"} scrolled={scrolled}>Home</NavLink>
+          <NavLink to="/" active={path === "/"} scrolled={scrolled}>
+            Home
+          </NavLink>
 
           <DropdownTrigger
             label="Products"
@@ -87,7 +121,9 @@ export function MegaNav() {
             onMouseEnter={() => openMenu("industries")}
             onMouseLeave={scheduleClose}
           />
-          <NavLink to="/projects" active={path.startsWith("/projects")} scrolled={scrolled}>Projects</NavLink>
+          <NavLink to="/projects" active={path.startsWith("/projects")} scrolled={scrolled}>
+            Projects
+          </NavLink>
           <DropdownTrigger
             label="Services"
             open={open === "services"}
@@ -95,25 +131,78 @@ export function MegaNav() {
             onMouseEnter={() => openMenu("services")}
             onMouseLeave={scheduleClose}
           />
-          <NavLink to="/about" active={path.startsWith("/about")} scrolled={scrolled}>About</NavLink>
-          <NavLink to="/contact" active={path.startsWith("/contact")} scrolled={scrolled}>Contact</NavLink>
+          <NavLink to="/about" active={path.startsWith("/about")} scrolled={scrolled}>
+            About
+          </NavLink>
+          <NavLink to="/contact" active={path.startsWith("/contact")} scrolled={scrolled}>
+            Contact
+          </NavLink>
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link to="/products" className={"hidden h-10 w-10 items-center justify-center rounded-full border hover:bg-white/10 md:flex " + (scrolled ? "border-white/20 text-white/80" : "border-line")} aria-label="Search">
+          <Link
+            to="/products"
+            className={
+              "hidden h-10 w-10 items-center justify-center rounded-full border hover:bg-white/10 md:flex " +
+              (scrolled ? "border-white/20 text-white/80" : "border-line")
+            }
+            aria-label="Search"
+          >
             <Search className="h-4 w-4" />
           </Link>
           <ThemeSwitcher />
-          <a href="tel:+995000000000" className={"hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " + (scrolled ? "border-white/20 text-white/80 hover:bg-white/10" : "border-line hover:bg-surface")}>
+          <a
+            href="tel:+995000000000"
+            className={
+              "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+              (scrolled
+                ? "border-white/20 text-white/80 hover:bg-white/10"
+                : "border-line hover:bg-surface")
+            }
+          >
             <Phone className="h-4 w-4" /> Call
           </a>
-          <Link to="/quote" className="hidden h-10 items-center gap-2 rounded-full bg-terracotta px-5 text-sm font-medium text-white hover:bg-terracotta/90 md:flex">
+          {user ? (
+            <Link
+              to="/account/orders"
+              className={
+                "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+                (scrolled
+                  ? "border-white/20 text-white/80 hover:bg-white/10"
+                  : "border-line hover:bg-surface")
+              }
+            >
+              <User className="h-4 w-4" />
+              <span className="hidden lg:inline">{user.name.split(" ")[0]}</span>
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              search={{ redirect: "/" }}
+              className={
+                "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+                (scrolled
+                  ? "border-white/20 text-white/80 hover:bg-white/10"
+                  : "border-line hover:bg-surface")
+              }
+            >
+              <User className="h-4 w-4" /> Sign in
+            </Link>
+          )}
+          <Link
+            to="/quote"
+            className="hidden h-10 items-center gap-2 rounded-full bg-terracotta px-5 text-sm font-medium text-white hover:bg-terracotta/90 md:flex"
+          >
             <FileText className="h-4 w-4" /> Request Quote
-            {count > 0 && (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/20 px-1.5 text-[11px] font-semibold">{count}</span>
-            )}
           </Link>
-          <button onClick={() => setMobileOpen((v) => !v)} className={"flex h-10 w-10 items-center justify-center rounded-full border lg:hidden " + (scrolled ? "border-white/20 text-white" : "border-line")} aria-label="Menu">
+          <button
+            onClick={() => setMobileOpen((v) => !v)}
+            className={
+              "flex h-10 w-10 items-center justify-center rounded-full border lg:hidden " +
+              (scrolled ? "border-white/20 text-white" : "border-line")
+            }
+            aria-label="Menu"
+          >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
@@ -125,13 +214,19 @@ export function MegaNav() {
           <div className="grid gap-x-10 gap-y-3 md:grid-cols-3 lg:grid-cols-4">
             {categories.slice(0, 12).map((c) => (
               <div key={c.slug}>
-                <Link to="/category/$slug" params={{ slug: c.slug }} className="font-display text-base text-ink hover:text-terracotta">
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: c.slug }}
+                  className="font-display text-base text-ink hover:text-terracotta"
+                >
                   {c.name}
                 </Link>
                 <ul className="mt-1 space-y-0.5">
                   {c.subcategories.slice(0, 4).map((s) => (
                     <li key={s} className="text-[13px] text-muted-foreground hover:text-ink">
-                      <Link to="/category/$slug" params={{ slug: c.slug }}>{s}</Link>
+                      <Link to="/category/$slug" params={{ slug: c.slug }}>
+                        {s}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -139,8 +234,12 @@ export function MegaNav() {
             ))}
           </div>
           <div className="mt-6 flex items-center justify-between border-t border-line pt-5">
-            <span className="text-sm text-muted-foreground">22 categories · 500+ SKUs across the catalog.</span>
-            <Link to="/products" className="btn-primary text-sm">View all products →</Link>
+            <span className="text-sm text-muted-foreground">
+              22 categories · 500+ SKUs across the catalog.
+            </span>
+            <Link to="/products" className="btn-primary text-sm">
+              View all products →
+            </Link>
           </div>
         </MegaPanel>
       )}
@@ -150,11 +249,16 @@ export function MegaNav() {
           <div className="flex gap-10">
             {/* left — industry list */}
             <div className="flex-1">
-              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Who we serve</div>
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Who we serve
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {INDUSTRIES.map(({ name, desc, icon: Icon }) => (
-                  <Link key={name} to="/industries"
-                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface">
+                  <Link
+                    key={name}
+                    to="/industries"
+                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface"
+                  >
                     <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-peach-soft/70 text-terracotta transition-colors group-hover:bg-terracotta group-hover:text-white">
                       <Icon className="h-4 w-4" />
                     </span>
@@ -170,8 +274,12 @@ export function MegaNav() {
             <div className="hidden w-64 shrink-0 lg:block">
               <div className="h-full rounded-2xl bg-gradient-to-br from-terracotta/10 to-peach-soft/60 p-6">
                 <div className="font-display text-xl text-ink">Outfitting a property?</div>
-                <p className="mt-2 text-sm text-muted-foreground">Tell us your room count, location and timeline — we'll tailor a quote in 48 hours.</p>
-                <Link to="/quote" className="btn-primary mt-5 inline-flex text-sm">Get a quote →</Link>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Tell us your room count, location and timeline — we'll tailor a quote in 48 hours.
+                </p>
+                <Link to="/quote" className="btn-primary mt-5 inline-flex text-sm">
+                  Get a quote →
+                </Link>
               </div>
             </div>
           </div>
@@ -183,11 +291,16 @@ export function MegaNav() {
           <div className="flex gap-10">
             {/* left — service list */}
             <div className="flex-1">
-              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">What we do</div>
+              <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                What we do
+              </div>
               <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
                 {SERVICES.map(({ name, desc, icon: Icon }) => (
-                  <Link key={name} to="/services"
-                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface">
+                  <Link
+                    key={name}
+                    to="/services"
+                    className="group flex items-start gap-3 rounded-xl p-3 transition-colors hover:bg-surface"
+                  >
                     <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-peach-soft/70 text-terracotta transition-colors group-hover:bg-terracotta group-hover:text-white">
                       <Icon className="h-4 w-4" />
                     </span>
@@ -203,8 +316,13 @@ export function MegaNav() {
             <div className="hidden w-64 shrink-0 lg:block">
               <div className="h-full rounded-2xl bg-gradient-to-br from-terracotta/10 to-peach-soft/60 p-6">
                 <div className="font-display text-xl text-ink">End-to-end delivery</div>
-                <p className="mt-2 text-sm text-muted-foreground">From sourcing a single item to managing a full hotel opening — Kaya handles it all.</p>
-                <Link to="/contact" className="btn-primary mt-5 inline-flex text-sm">Talk to us →</Link>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  From sourcing a single item to managing a full hotel opening — Kaya handles it
+                  all.
+                </p>
+                <Link to="/contact" className="btn-primary mt-5 inline-flex text-sm">
+                  Talk to us →
+                </Link>
               </div>
             </div>
           </div>
@@ -221,7 +339,12 @@ export function MegaNav() {
               <summary className="cursor-pointer px-2 py-2 text-sm font-medium">Categories</summary>
               <div className="ml-3 mt-1 space-y-1">
                 {categories.map((c) => (
-                  <Link key={c.slug} to="/category/$slug" params={{ slug: c.slug }} className="block rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:bg-surface-alt">
+                  <Link
+                    key={c.slug}
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    className="block rounded-md px-2 py-1.5 text-[13px] text-muted-foreground hover:bg-surface-alt"
+                  >
                     {c.name}
                   </Link>
                 ))}
@@ -232,8 +355,18 @@ export function MegaNav() {
             <MobileLink to="/services">Services</MobileLink>
             <MobileLink to="/about">About</MobileLink>
             <MobileLink to="/contact">Contact</MobileLink>
-            <Link to="/quote" className="mt-3 block w-full rounded-full bg-foreground py-3 text-center text-sm font-medium text-background">
-              Request Quote {count > 0 && `(${count})`}
+            {user ? (
+              <MobileLink to="/account/orders">My Account</MobileLink>
+            ) : (
+              <MobileLink to="/auth" search={{ redirect: "/" }}>
+                Sign in
+              </MobileLink>
+            )}
+            <Link
+              to="/quote"
+              className="mt-3 block w-full rounded-full bg-foreground py-3 text-center text-sm font-medium text-background"
+            >
+              Request Quote
             </Link>
           </div>
         </div>
@@ -242,11 +375,25 @@ export function MegaNav() {
   );
 }
 
-function NavLink({ to, active, scrolled, children }: { to: string; active: boolean; scrolled: boolean; children: React.ReactNode }) {
+function NavLink({
+  to,
+  active,
+  scrolled,
+  children,
+}: {
+  to: string;
+  active: boolean;
+  scrolled: boolean;
+  children: React.ReactNode;
+}) {
   const base = "relative px-3 py-2 text-sm transition-colors ";
   const color = scrolled
-    ? (active ? "text-white font-medium" : "text-white/70 hover:text-white")
-    : (active ? "text-ink font-medium" : "text-ink-soft hover:text-ink");
+    ? active
+      ? "text-white font-medium"
+      : "text-white/70 hover:text-white"
+    : active
+      ? "text-ink font-medium"
+      : "text-ink-soft hover:text-ink";
   return (
     <Link to={to} className={base + color}>
       {children}
@@ -257,7 +404,13 @@ function NavLink({ to, active, scrolled, children }: { to: string; active: boole
   );
 }
 
-function DropdownTrigger({ label, open, scrolled, onMouseEnter, onMouseLeave }: {
+function DropdownTrigger({
+  label,
+  open,
+  scrolled,
+  onMouseEnter,
+  onMouseLeave,
+}: {
   label: string;
   open: boolean;
   scrolled: boolean;
@@ -266,18 +419,30 @@ function DropdownTrigger({ label, open, scrolled, onMouseEnter, onMouseLeave }: 
 }) {
   const base = "relative flex items-center gap-1 px-3 py-2 text-sm transition-colors ";
   const color = scrolled
-    ? (open ? "text-white font-medium" : "text-white/70 hover:text-white")
-    : (open ? "text-ink font-medium" : "text-ink-soft hover:text-ink");
+    ? open
+      ? "text-white font-medium"
+      : "text-white/70 hover:text-white"
+    : open
+      ? "text-ink font-medium"
+      : "text-ink-soft hover:text-ink";
   return (
     <button onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className={base + color}>
       {label}
-      <ChevronDown className={"h-3.5 w-3.5 transition-transform duration-200 " + (open ? "rotate-180" : "")} />
-      {open && <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />}
+      <ChevronDown
+        className={"h-3.5 w-3.5 transition-transform duration-200 " + (open ? "rotate-180" : "")}
+      />
+      {open && (
+        <span className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-terracotta" />
+      )}
     </button>
   );
 }
 
-function MegaPanel({ children, onMouseEnter, onMouseLeave }: {
+function MegaPanel({
+  children,
+  onMouseEnter,
+  onMouseLeave,
+}: {
   children: React.ReactNode;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -293,9 +458,21 @@ function MegaPanel({ children, onMouseEnter, onMouseLeave }: {
   );
 }
 
-function MobileLink({ to, children }: { to: string; children: React.ReactNode }) {
+function MobileLink({
+  to,
+  search,
+  children,
+}: {
+  to: string;
+  search?: Record<string, string>;
+  children: React.ReactNode;
+}) {
   return (
-    <Link to={to} className="block rounded-lg px-2 py-2 text-sm font-medium hover:bg-surface-alt">
+    <Link
+      to={to}
+      search={search}
+      className="block rounded-lg px-2 py-2 text-sm font-medium hover:bg-surface-alt"
+    >
       {children}
     </Link>
   );

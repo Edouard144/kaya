@@ -39,9 +39,13 @@ function MyOrders() {
         <div>
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Account</div>
           <h1 className="mt-2 font-display text-5xl md:text-6xl">My orders</h1>
-          <p className="mt-2 text-muted-foreground">Hi {user.name.split(" ")[0]} — here's everything you've placed.</p>
+          <p className="mt-2 text-muted-foreground">
+            Hi {user.name.split(" ")[0]} — here's everything you've placed.
+          </p>
         </div>
-        <button onClick={logout} className="btn-ghost text-sm">Sign out</button>
+        <button onClick={logout} className="btn-ghost text-sm">
+          Sign out
+        </button>
       </div>
 
       <div className="mt-10">
@@ -60,16 +64,26 @@ function MyOrders() {
           <div className="surface-card p-12 text-center">
             <div className="font-display text-3xl">No orders yet</div>
             <p className="mt-2 text-muted-foreground">Place your first order from the catalog.</p>
-            <Link to="/products" className="btn-primary mt-6 inline-block">Browse supplies</Link>
+            <Link to="/products" className="btn-primary mt-6 inline-block">
+              Browse supplies
+            </Link>
           </div>
         ) : (
           <ul className="space-y-3">
             {data!.map((o) => (
-              <li key={o.id} className="surface-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <li
+                key={o.id}
+                className="surface-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-display text-xl">Order #{o.id.slice(0, 8)}</span>
-                    <span className={"rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider " + statusColor[o.status]}>
+                    <span
+                      className={
+                        "rounded-full px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider " +
+                        statusColor[o.status]
+                      }
+                    >
                       {o.status}
                     </span>
                   </div>
@@ -87,4 +101,3 @@ function MyOrders() {
     </div>
   );
 }
-

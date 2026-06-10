@@ -39,13 +39,17 @@ cpSync(join(root, "dist", "server"), funcDir, { recursive: true });
 // 3. Write .vc-config.json for the function
 writeFileSync(
   join(funcDir, ".vc-config.json"),
-  JSON.stringify({
-    handler: "index.mjs",
-    runtime: "nodejs20.x",
-    launcherType: "Nodejs",
-    shouldAddHelpers: false,
-    supportsResponseStreaming: true,
-  }, null, 2)
+  JSON.stringify(
+    {
+      handler: "index.mjs",
+      runtime: "nodejs20.x",
+      launcherType: "Nodejs",
+      shouldAddHelpers: false,
+      supportsResponseStreaming: true,
+    },
+    null,
+    2,
+  ),
 );
 
 // 4. Write top-level config.json
@@ -53,15 +57,19 @@ writeFileSync(
 //    Phase 2: any path not matched by a static file falls through to the SSR function
 writeFileSync(
   join(out, "config.json"),
-  JSON.stringify({
-    version: 3,
-    routes: [
-      // Serve static files (assets/, images, etc.) directly from CDN
-      { handle: "filesystem" },
-      // Everything else goes to the SSR function
-      { src: "/(.*)", dest: "/[[catchall]]" },
-    ],
-  }, null, 2)
+  JSON.stringify(
+    {
+      version: 3,
+      routes: [
+        // Serve static files (assets/, images, etc.) directly from CDN
+        { handle: "filesystem" },
+        // Everything else goes to the SSR function
+        { src: "/(.*)", dest: "/[[catchall]]" },
+      ],
+    },
+    null,
+    2,
+  ),
 );
 
 console.log("✓ Vercel Build Output API structure created at .vercel/output/");

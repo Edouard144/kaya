@@ -12,7 +12,6 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth";
-import { CartProvider } from "../lib/cart";
 import { MegaNav } from "../components/MegaNav";
 import { Footer } from "../components/Footer";
 import { useInitTheme } from "../components/ThemeSwitcher";
@@ -28,8 +27,12 @@ function NotFoundComponent() {
           That route doesn't exist. Let's get you back to the catalog.
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <Link to="/" className="btn-ghost">Home</Link>
-          <Link to="/products" className="btn-primary">Browse supplies</Link>
+          <Link to="/" className="btn-ghost">
+            Home
+          </Link>
+          <Link to="/products" className="btn-primary">
+            Browse supplies
+          </Link>
         </div>
       </div>
     </div>
@@ -52,12 +55,17 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="btn-primary"
           >
             Try again
           </button>
-          <a href="/" className="btn-ghost">Go home</a>
+          <a href="/" className="btn-ghost">
+            Go home
+          </a>
         </div>
       </div>
     </div>
@@ -70,13 +78,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Kaya — Hotel Solutions, end to end" },
-      { name: "description", content: "Kaya supplies, installs and outfits hotels worldwide — furniture, linens, bathroom, kitchen, lighting, security and more. Request a free quote." },
+      {
+        name: "description",
+        content:
+          "Kaya supplies, installs and outfits hotels worldwide — furniture, linens, bathroom, kitchen, lighting, security and more. Request a free quote.",
+      },
       { property: "og:title", content: "Kaya — Hotel Solutions, end to end" },
-      { property: "og:description", content: "Furniture, linens, bathroom, kitchen, lighting, security — every supply a hotel needs, from one partner." },
+      {
+        property: "og:description",
+        content:
+          "Furniture, linens, bathroom, kitchen, lighting, security — every supply a hotel needs, from one partner.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Kaya — Hotel Solutions, end to end" },
-      { name: "twitter:description", content: "Furniture, linens, bathroom, kitchen, lighting, security — every supply a hotel needs, from one partner." },
+      {
+        name: "twitter:description",
+        content:
+          "Furniture, linens, bathroom, kitchen, lighting, security — every supply a hotel needs, from one partner.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -92,7 +112,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+      </head>
       <body>
         {children}
         <Scripts />
@@ -107,10 +129,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CartProvider>
           <div className="flex min-h-screen flex-col">
             <MegaNav />
-            <main className="flex-1"><Outlet /></main>
+            <main className="flex-1">
+              <Outlet />
+            </main>
             <Footer />
           </div>
           <Toaster
@@ -124,9 +147,7 @@ function RootComponent() {
               },
             }}
           />
-        </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
 }
-

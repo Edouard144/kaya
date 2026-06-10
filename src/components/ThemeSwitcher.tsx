@@ -14,7 +14,11 @@ const KEY = "kaya_theme";
 export function applyTheme(id: ThemeId) {
   if (typeof document === "undefined") return;
   document.documentElement.setAttribute("data-theme", id);
-  try { window.localStorage.setItem(KEY, id); } catch { /* ignore */ }
+  try {
+    window.localStorage.setItem(KEY, id);
+  } catch {
+    /* ignore */
+  }
 }
 
 export function useInitTheme() {
@@ -22,7 +26,9 @@ export function useInitTheme() {
     try {
       const saved = (window.localStorage.getItem(KEY) as ThemeId | null) ?? "warm";
       applyTheme(saved);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 }
 
@@ -34,7 +40,9 @@ export function ThemeSwitcher() {
     try {
       const saved = (window.localStorage.getItem(KEY) as ThemeId | null) ?? "warm";
       setActive(saved);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   return (
@@ -55,13 +63,20 @@ export function ThemeSwitcher() {
             {THEMES.map((t) => (
               <button
                 key={t.id}
-                onClick={() => { applyTheme(t.id); setActive(t.id); setOpen(false); }}
+                onClick={() => {
+                  applyTheme(t.id);
+                  setActive(t.id);
+                  setOpen(false);
+                }}
                 className={
                   "flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm transition-colors hover:bg-surface-alt " +
                   (active === t.id ? "bg-surface-alt" : "")
                 }
               >
-                <span className="h-5 w-5 rounded-full border border-line/70" style={{ background: t.swatch }} />
+                <span
+                  className="h-5 w-5 rounded-full border border-line/70"
+                  style={{ background: t.swatch }}
+                />
                 <span className="flex-1 text-left">{t.label}</span>
                 {active === t.id && <span className="text-xs text-terracotta">●</span>}
               </button>
@@ -72,4 +87,3 @@ export function ThemeSwitcher() {
     </div>
   );
 }
-

@@ -119,9 +119,21 @@ const services = [
 ];
 
 const process = [
-  { n: "01", title: "Tell us about your project", body: "Fill in the quote form — room count, location, timeline and the categories you need. Takes under 5 minutes." },
-  { n: "02", title: "We send a tailored proposal", body: "Within 48 hours a member of the Kaya team responds with a full scope, product selection and indicative budget." },
-  { n: "03", title: "Approve and we get to work", body: "Once you approve, we lock in production and logistics slots. A project manager tracks everything to handover." },
+  {
+    n: "01",
+    title: "Tell us about your project",
+    body: "Fill in the quote form — room count, location, timeline and the categories you need. Takes under 5 minutes.",
+  },
+  {
+    n: "02",
+    title: "We send a tailored proposal",
+    body: "Within 48 hours a member of the Kaya team responds with a full scope, product selection and indicative budget.",
+  },
+  {
+    n: "03",
+    title: "Approve and we get to work",
+    body: "Once you approve, we lock in production and logistics slots. A project manager tracks everything to handover.",
+  },
 ];
 
 function ServicesPage() {
@@ -134,19 +146,20 @@ function ServicesPage() {
             What we do
           </div>
           <h1 className="mt-3 font-display text-6xl leading-[0.95] md:text-7xl lg:text-8xl">
-            One partner.{" "}
-            <span className="italic text-terracotta">Every service.</span>
+            One partner. <span className="italic text-terracotta">Every service.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            From sourcing a single linen order to managing a full 200-room hotel
-            fit-out — Kaya handles supply, installation, design and maintenance
-            so you have one contract, one contact, one timeline.
+            From sourcing a single linen order to managing a full 200-room hotel fit-out — Kaya
+            handles supply, installation, design and maintenance so you have one contract, one
+            contact, one timeline.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/quote" className="btn-primary inline-flex items-center gap-2">
               Start a project <ArrowUpRight className="h-4 w-4" />
             </Link>
-            <Link to="/contact" className="btn-ghost">Talk to sales</Link>
+            <Link to="/contact" className="btn-ghost">
+              Talk to sales
+            </Link>
           </div>
         </div>
       </section>
@@ -170,9 +183,7 @@ function ServicesPage() {
                       <Icon className="h-7 w-7" />
                     </span>
                     <div>
-                      <div className="font-display text-5xl text-terracotta/30">
-                        {s.label}
-                      </div>
+                      <div className="font-display text-5xl text-terracotta/30">{s.label}</div>
                       <div className="mt-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                         {s.tagline}
                       </div>
@@ -209,8 +220,11 @@ function ServicesPage() {
 
       {/* ── Process ───────────────────────────────── */}
       <section className="container-page py-16">
-        <div className="surface-card p-10 md:p-14"
-          style={{ backgroundImage: "linear-gradient(135deg, var(--peach-soft) 0%, var(--surface) 60%)" }}
+        <div
+          className="surface-card p-10 md:p-14"
+          style={{
+            backgroundImage: "linear-gradient(135deg, var(--peach-soft) 0%, var(--surface) 60%)",
+          }}
         >
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
             How it works
@@ -234,19 +248,19 @@ function ServicesPage() {
       <section className="container-page pb-24">
         <div className="surface-card flex flex-col items-start gap-6 p-10 md:flex-row md:items-center md:justify-between md:p-14">
           <div>
-            <h3 className="font-display text-3xl md:text-4xl">
-              Ready to start your project?
-            </h3>
+            <h3 className="font-display text-3xl md:text-4xl">Ready to start your project?</h3>
             <p className="mt-2 max-w-xl text-muted-foreground">
-              Send us your room count, location and timeline. We'll respond
-              within 48 hours with a full proposal.
+              Send us your room count, location and timeline. We'll respond within 48 hours with a
+              full proposal.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link to="/quote" className="btn-primary inline-flex items-center gap-2">
               Request a quote <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/contact" className="btn-ghost">Talk to us</Link>
+            <Link to="/contact" className="btn-ghost">
+              Talk to us
+            </Link>
           </div>
         </div>
       </section>

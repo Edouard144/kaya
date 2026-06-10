@@ -8,10 +8,10 @@
 /* ─── Kaya / Provisto design tokens ──────────────────────────── */
 :root {
   /* surfaces */
-  --background: #f7ecdf;            /* cream */
-  --surface: #fffaf3;               /* card surface */
+  --background: #f7ecdf; /* cream */
+  --surface: #fffaf3; /* card surface */
   --surface-alt: #f6ede4;
-  --foreground: #1a120e;            /* ink */
+  --foreground: #1a120e; /* ink */
   --ink-soft: #2a1f19;
   --muted: rgba(26, 18, 14, 0.64);
   --muted-foreground: rgba(26, 18, 14, 0.64);
@@ -20,7 +20,7 @@
   --peach: #ecc6a6;
   --peach-deep: #e3b18b;
   --peach-soft: #f0d4b2;
-  --terracotta: #d97757;            /* primary CTA */
+  --terracotta: #d97757; /* primary CTA */
   --terracotta-deep: #c86f4e;
   --pink-soft: #ffb2c5;
 
@@ -154,16 +154,31 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-body);
     font-feature-settings: "ss01", "cv11";
   }
-  h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
-  ::selection { background: var(--terracotta); color: #fffaf3; }
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background: var(--terracotta);
+    color: #fffaf3;
+  }
 }
 
 @utility container-page {
@@ -186,10 +201,16 @@
   padding: 0.75rem 1.5rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
-.btn-primary:hover { background: var(--terracotta-deep); }
-.btn-primary:active { transform: translateY(1px); }
+.btn-primary:hover {
+  background: var(--terracotta-deep);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+}
 
 @utility btn-ghost {
   background: transparent;
@@ -198,9 +219,14 @@
   border-radius: 999px;
   padding: 0.65rem 1.25rem;
   font-weight: 500;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
-.btn-ghost:hover { background: var(--surface); border-color: var(--foreground); }
+.btn-ghost:hover {
+  background: var(--surface);
+  border-color: var(--foreground);
+}
 
 @utility field {
   width: 100%;
@@ -210,9 +236,15 @@
   padding: 0.6rem 0.85rem;
   font-family: var(--font-body);
   color: var(--foreground);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
-.field:focus { outline: none; border-color: var(--terracotta); box-shadow: 0 0 0 3px color-mix(in oklab, var(--terracotta) 22%, transparent); }
+.field:focus {
+  outline: none;
+  border-color: var(--terracotta);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--terracotta) 22%, transparent);
+}
 
 /* ─── Theme variants (data-theme on <html>) ──────────────── */
 :root[data-theme="noir"] {
@@ -256,20 +288,29 @@
 }
 
 /* ─── Marquee (auto-scrolling category rows) ─────────────── */
-.kaya-marquee { mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+.kaya-marquee {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
 @keyframes kaya-marquee-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 .kaya-marquee-track {
   width: max-content;
   animation: kaya-marquee-x 120s linear infinite;
 }
-.kaya-marquee-track.kaya-marquee-reverse { animation-direction: reverse; }
-.kaya-marquee:hover .kaya-marquee-track { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) {
-  .kaya-marquee-track { animation: none; }
+.kaya-marquee-track.kaya-marquee-reverse {
+  animation-direction: reverse;
 }
-
-
-
+.kaya-marquee:hover .kaya-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kaya-marquee-track {
+    animation: none;
+  }
+}

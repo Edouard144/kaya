@@ -5,9 +5,17 @@ export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
       { title: "Projects — Kaya" },
-      { name: "description", content: "Hotels, resorts and apartment projects outfitted by Kaya across Georgia and beyond." },
+      {
+        name: "description",
+        content:
+          "Hotels, resorts and apartment projects outfitted by Kaya across Georgia and beyond.",
+      },
       { property: "og:title", content: "Projects — Kaya" },
-      { property: "og:description", content: "A selection of properties we've delivered — from boutique hotels to flagship resorts." },
+      {
+        property: "og:description",
+        content:
+          "A selection of properties we've delivered — from boutique hotels to flagship resorts.",
+      },
     ],
   }),
   component: () => (
@@ -22,11 +30,18 @@ export const Route = createFileRoute("/projects")({
         {projects.concat(projects).map((p, i) => (
           <div key={p.title + i} className="surface-card group overflow-hidden">
             <div className="relative aspect-[16/10] overflow-hidden">
-              <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img
+                src={p.image}
+                alt={p.title}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
             </div>
             <div className="p-6">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{p.location}</div>
+              <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                {p.location}
+              </div>
               <div className="mt-1 font-display text-2xl">{p.title}</div>
               <p className="mt-2 text-sm text-muted-foreground">{p.scope}</p>
             </div>
@@ -34,9 +49,10 @@ export const Route = createFileRoute("/projects")({
         ))}
       </div>
       <div className="mt-12 text-center">
-        <Link to="/quote" className="btn-primary">Start your project →</Link>
+        <Link to="/quote" className="btn-primary">
+          Start your project →
+        </Link>
       </div>
     </div>
   ),
 });
-
