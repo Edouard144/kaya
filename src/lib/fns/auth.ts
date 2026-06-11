@@ -48,12 +48,15 @@ export const login = createServerFn({ method: "POST" })
 
 export const register = createServerFn({ method: "POST" })
   .inputValidator((data: { name: string; email: string; password: string }) => ({
-    name: String(data.name ?? ""),
-    email: String(data.email ?? ""),
-    password: String(data.password ?? ""),
+    name: String(data?.name ?? ""),
+    email: String(data?.email ?? ""),
+    password: String(data?.password ?? ""),
   }))
   .handler(async ({ data }) => {
-    const { name, email, password } = data;
+    const name = String(data?.name ?? "");
+    const email = String(data?.email ?? "");
+    const password = String(data?.password ?? "");
+    if (!password) throw new Error("Password is required");
 
     const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (existing.length > 0) {

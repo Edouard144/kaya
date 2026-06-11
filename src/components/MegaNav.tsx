@@ -197,14 +197,14 @@ export function MegaNav() {
                   : "border-line hover:bg-surface")
               }
             >
-              <User className="h-4 w-4" /> <span className="hidden sm:inline">Sign in</span>
+              <User className="h-4 w-4" /> <span className="hidden whitespace-nowrap sm:inline">Sign in</span>
             </Link>
           )}
           <Link
             to="/quote"
-            className="flex h-10 items-center gap-2 rounded-full bg-terracotta px-4 text-sm font-medium text-white hover:bg-terracotta/90 sm:px-5"
+            className="flex h-10 items-center gap-2 whitespace-nowrap rounded-full bg-terracotta px-4 text-sm font-medium text-white hover:bg-terracotta/90 sm:px-5"
           >
-            <FileText className="h-4 w-4" /> <span className="hidden sm:inline">Request Quote</span>
+            <FileText className="h-4 w-4" /> <span className="hidden whitespace-nowrap sm:inline">Request Quote</span>
           </Link>
           <button
             onClick={() => setMobileOpen((v) => !v)}

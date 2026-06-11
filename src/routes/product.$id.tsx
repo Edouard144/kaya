@@ -158,6 +158,14 @@ function ProductPage() {
             <div className="mt-6 surface-card p-5">
               <div className="font-display text-3xl text-terracotta">{formatUSD(parseFloat(product.price))}</div>
               <p className="mt-1 text-sm text-muted-foreground">per unit</p>
+              {product.stock != null && (
+                <div className="mt-3 flex items-center gap-2 text-sm">
+                  <span className={`h-2 w-2 rounded-full ${product.stock > 0 ? "bg-green-500" : "bg-red-500"}`} />
+                  <span className="text-muted-foreground">
+                    {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
