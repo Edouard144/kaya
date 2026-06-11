@@ -191,6 +191,7 @@ function ProductPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/quote" className="btn-primary">Request a quote</Link>
+            <Link to="/account/orders" className="btn-ghost">View my orders</Link>
             <Link to="/contact" className="btn-ghost">Talk to sales</Link>
           </div>
 

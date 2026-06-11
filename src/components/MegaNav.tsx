@@ -20,6 +20,7 @@ import {
   ClipboardList,
   Star,
   User,
+  Package,
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -177,14 +178,13 @@ export function MegaNav() {
             <Link
               to="/account/orders"
               className={
-                "hidden h-10 items-center gap-2 rounded-full border px-4 text-sm md:flex " +
+                "flex h-10 items-center gap-2 rounded-full border px-3 text-sm " +
                 (scrolled
                   ? "border-white/20 text-white/80 hover:bg-white/10"
                   : "border-line hover:bg-surface")
               }
             >
-              <User className="h-4 w-4" />
-              <span className="hidden lg:inline">{user.name.split(" ")[0]}</span>
+              <Package className="h-4 w-4" /> <span className="hidden whitespace-nowrap sm:inline">My Orders</span>
             </Link>
           ) : (
             <Link
@@ -366,6 +366,7 @@ export function MegaNav() {
             <MobileLink to="/services">Services</MobileLink>
             <MobileLink to="/about">About</MobileLink>
             <MobileLink to="/contact">Contact</MobileLink>
+            {user && <MobileLink to="/account/orders">My Orders</MobileLink>}
           </div>
         </div>
       )}
