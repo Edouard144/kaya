@@ -8,6 +8,7 @@ import { formatUSD } from "@/lib/shopify";
 import {
   listProducts,
   listCategories,
+  syncCategories,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -213,6 +214,16 @@ function Dashboard() {
     onError: (e: Error) => toast.error("Delete failed: " + e.message),
   });
 
+  const syncCategoriesMut = useMutation({
+    mutationFn: () => syncCategories(),
+    onSuccess: (result) => {
+      toast.success(`Synced categories: ${result.created} created, ${result.updated} updated`);
+      qc.invalidateQueries({ queryKey: ["admin-categories"] });
+      qc.invalidateQueries({ queryKey: ["public-categories"] });
+    },
+    onError: (e: Error) => toast.error("Sync failed: " + e.message),
+  });
+
   const resetForm = () => {
     setFormName("");
     setFormDesc("");
@@ -353,7 +364,7 @@ function Dashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex flex-wrap gap-2">
         <button
           onClick={() => { setTab("products"); resetForm(); }}
           className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " + (tab === "products" ? "bg-foreground text-background" : "border border-line hover:bg-surface")}
@@ -365,6 +376,13 @@ function Dashboard() {
           className={"rounded-full px-4 py-2 text-sm font-medium transition-colors " + (tab === "add" ? "bg-foreground text-background" : "border border-line hover:bg-surface")}
         >
           {editingId ? "Edit Product" : "+ New Product"}
+        </button>
+        <button
+          onClick={() => syncCategoriesMut.mutate()}
+          disabled={syncCategoriesMut.isPending}
+          className="rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-surface disabled:opacity-50"
+        >
+          {syncCategoriesMut.isPending ? "Syncing…" : "Sync Categories"}
         </button>
       </div>
 

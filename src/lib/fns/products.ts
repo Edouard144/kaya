@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { db } from "@/db";
 import { products, productImages, categories } from "@/db/schema";
 import { eq, like, desc, sql } from "drizzle-orm";
+import { categories as staticCategories } from "@/data/catalog";
 import {
   createShopifyProduct,
   updateShopifyProduct,
@@ -35,6 +36,40 @@ export const listCategories = createServerFn({ method: "GET" })
     return db.select().from(categories).orderBy(categories.name);
   });
 
+export const syncCategories = createServerFn({ method: "POST" })
+  .handler(async () => {
+    const existing = await db.select().from(categories);
+    const existingBySlug = new Map(existing.map((c) => [c.slug, c]));
+    const existingByName = new Map(existing.map((c) => [c.name.toLowerCase(), c]));
+
+    let created = 0;
+    let updated = 0;
+
+    for (const sc of staticCategories) {
+      const bySlug = existingBySlug.get(sc.slug);
+      if (bySlug) {
+        // Category exists with this slug — check if name matches
+        if (bySlug.name !== sc.name) {
+          await db.update(categories).set({ name: sc.name }).where(eq(categories.id, bySlug.id));
+          updated++;
+        }
+      } else {
+        // Check if a DB category has the same name (just needs slug updated)
+        const byName = existingByName.get(sc.name.toLowerCase());
+        if (byName) {
+          await db.update(categories).set({ slug: sc.slug }).where(eq(categories.id, byName.id));
+          updated++;
+        } else {
+          // Brand new category
+          await db.insert(categories).values({ name: sc.name, slug: sc.slug });
+          created++;
+        }
+      }
+    }
+
+    return { created, updated, total: staticCategories.length };
+  });
+
 export const getCategoryBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }) => {
@@ -44,21 +79,25 @@ export const getCategoryBySlug = createServerFn({ method: "GET" })
     const bySlug = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
     if (bySlug.length > 0) return bySlug[0];
 
-    // 2. Name-to-slug: slugify each DB category name and compare
+    // 2. Find static category by slug, then match DB by name
+    const staticCat = staticCategories.find((c) => c.slug === slug);
+    if (staticCat) {
+      const byName = await db.select().from(categories).where(eq(categories.name, staticCat.name)).limit(1);
+      if (byName.length > 0) {
+        // Update slug to match for next time
+        await db.update(categories).set({ slug }).where(eq(categories.id, byName[0].id));
+        return byName[0];
+      }
+    }
+
+    // 3. Slugify each DB category name and compare
     const all = await db.select().from(categories);
     const slugified = all.find((c) =>
       c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === slug
     );
     if (slugified) return slugified;
 
-    // 3. Partial name match from the URL slug words
-    const words = slug.split("-").filter(Boolean);
-    const partial = all.find((c) => {
-      const lower = c.name.toLowerCase();
-      return words.some((w) => w.length > 2 && lower.includes(w));
-    });
-    if (partial) return partial;
-
+    // 4. No match
     return null;
   });
 
