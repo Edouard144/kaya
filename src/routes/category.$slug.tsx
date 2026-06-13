@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { categories } from "@/data/catalog";
-import { listCategories, listPublicProducts } from "@/lib/fns/products";
+import { getCategoryBySlug, listPublicProducts } from "@/lib/fns/products";
 import { formatUSD } from "@/lib/shopify";
 
 export const Route = createFileRoute("/category/$slug")({
@@ -18,31 +18,17 @@ export const Route = createFileRoute("/category/$slug")({
       ],
     };
   },
-  notFoundComponent: () => (
-    <div className="container-page py-24 text-center">
-      <h1 className="font-display text-4xl">Category not found</h1>
-      <Link to="/products" className="btn-primary mt-6 inline-flex">Browse catalog</Link>
-    </div>
-  ),
   component: CategoryPage,
 });
 
 function CategoryPage() {
   const { slug } = Route.useParams();
 
-  // Fetch DB categories to find the one matching this slug
-  const { data: dbCategories, isLoading: catsLoading } = useQuery({
-    queryKey: ["public-categories"],
-    queryFn: () => listCategories(),
+  // Server-side slug matching: exact → slugified name → partial word match
+  const { data: matchedCategory, isLoading: catLoading } = useQuery({
+    queryKey: ["category-by-slug", slug],
+    queryFn: () => getCategoryBySlug({ data: { slug } }),
   });
-
-  // Static category for metadata + slug-to-name fallback
-  const staticCategory = categories.find((x) => x.slug === slug);
-
-  // Try DB slug match first, then fall back to matching by static category name
-  const matchedCategory = dbCategories?.find((c) => c.slug === slug)
-    ?? dbCategories?.find((c) => c.name.toLowerCase() === staticCategory?.name.toLowerCase())
-    ?? dbCategories?.find((c) => c.name.toLowerCase().includes(staticCategory?.name?.split(" ")[0]?.toLowerCase() ?? "__none__"));
 
   // Fetch DB products for this category
   const { data: dbProducts, isLoading: productsLoading } = useQuery({
@@ -51,14 +37,13 @@ function CategoryPage() {
     enabled: !!matchedCategory,
   });
 
-  const isLoading = catsLoading || productsLoading;
+  const isLoading = catLoading || productsLoading;
 
-  const categoryName = matchedCategory?.name || staticCategory?.name || slug;
+  const staticCategory = categories.find((x) => x.slug === slug);
+  const categoryName = matchedCategory?.name || staticCategory?.name || slug.replace(/-/g, " ");
   const categoryDescription = staticCategory?.blurb || "";
   const categoryImage = staticCategory?.cover || null;
   const products = dbProducts ?? [];
-  const related = dbCategories?.filter((x) => x.slug !== slug).slice(0, 4)
-    ?? categories.filter((x) => x.slug !== slug).slice(0, 4);
 
   if (isLoading) {
     return (
@@ -110,7 +95,7 @@ function CategoryPage() {
         <div className="mb-6 flex items-end justify-between">
           <h2 className="font-display text-3xl md:text-4xl">Products</h2>
           <span className="text-sm text-muted-foreground">
-            {products.length} items
+            {products.length} item{products.length === 1 ? "" : "s"}
           </span>
         </div>
 
@@ -150,19 +135,19 @@ function CategoryPage() {
         )}
       </section>
 
-      {/* related */}
+      {/* related categories */}
       <section className="container-page pb-24">
-        <h3 className="font-display text-2xl">Related categories</h3>
+        <h3 className="font-display text-2xl">Other categories</h3>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {related.map((r) => (
+          {categories.filter((x) => x.slug !== slug).slice(0, 4).map((c) => (
             <Link
-              key={r.slug}
+              key={c.slug}
               to="/category/$slug"
-              params={{ slug: r.slug }}
+              params={{ slug: c.slug }}
               className="surface-card group flex items-center justify-between p-5 transition-transform hover:-translate-y-0.5"
             >
               <div>
-                <div className="font-display text-lg">{r.name}</div>
+                <div className="font-display text-lg">{c.name}</div>
               </div>
               <ArrowRight className="h-4 w-4 text-terracotta" />
             </Link>

@@ -35,6 +35,33 @@ export const listCategories = createServerFn({ method: "GET" })
     return db.select().from(categories).orderBy(categories.name);
   });
 
+export const getCategoryBySlug = createServerFn({ method: "GET" })
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data }) => {
+    const { slug } = data;
+
+    // 1. Exact slug match
+    const bySlug = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
+    if (bySlug.length > 0) return bySlug[0];
+
+    // 2. Name-to-slug: slugify each DB category name and compare
+    const all = await db.select().from(categories);
+    const slugified = all.find((c) =>
+      c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === slug
+    );
+    if (slugified) return slugified;
+
+    // 3. Partial name match from the URL slug words
+    const words = slug.split("-").filter(Boolean);
+    const partial = all.find((c) => {
+      const lower = c.name.toLowerCase();
+      return words.some((w) => w.length > 2 && lower.includes(w));
+    });
+    if (partial) return partial;
+
+    return null;
+  });
+
 export const listPublicProducts = createServerFn({ method: "GET" })
   .inputValidator(
     (data: { search?: string; categoryId?: string } | undefined) => data ?? {},
