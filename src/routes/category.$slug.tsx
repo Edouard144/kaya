@@ -36,7 +36,13 @@ function CategoryPage() {
     queryFn: () => listCategories(),
   });
 
-  const matchedCategory = dbCategories?.find((c) => c.slug === slug);
+  // Static category for metadata + slug-to-name fallback
+  const staticCategory = categories.find((x) => x.slug === slug);
+
+  // Try DB slug match first, then fall back to matching by static category name
+  const matchedCategory = dbCategories?.find((c) => c.slug === slug)
+    ?? dbCategories?.find((c) => c.name.toLowerCase() === staticCategory?.name.toLowerCase())
+    ?? dbCategories?.find((c) => c.name.toLowerCase().includes(staticCategory?.name?.split(" ")[0]?.toLowerCase() ?? "__none__"));
 
   // Fetch DB products for this category
   const { data: dbProducts, isLoading: productsLoading } = useQuery({
@@ -46,8 +52,6 @@ function CategoryPage() {
   });
 
   const isLoading = catsLoading || productsLoading;
-
-  const staticCategory = categories.find((x) => x.slug === slug);
 
   const categoryName = matchedCategory?.name || staticCategory?.name || slug;
   const categoryDescription = staticCategory?.blurb || "";
