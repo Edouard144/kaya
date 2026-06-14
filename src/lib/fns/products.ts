@@ -39,31 +39,44 @@ export const listCategories = createServerFn({ method: "GET" })
 export const syncCategories = createServerFn({ method: "POST" })
   .handler(async () => {
     const existing = await db.select().from(categories);
-    const existingBySlug = new Map(existing.map((c) => [c.slug, c]));
-    const existingByName = new Map(existing.map((c) => [c.name.toLowerCase(), c]));
 
     let created = 0;
     let updated = 0;
 
     for (const sc of staticCategories) {
-      const bySlug = existingBySlug.get(sc.slug);
-      if (bySlug) {
-        // Category exists with this slug — check if name matches
-        if (bySlug.name !== sc.name) {
-          await db.update(categories).set({ name: sc.name }).where(eq(categories.id, bySlug.id));
+      // 1. Exact slug match
+      let match = existing.find((c) => c.slug === sc.slug);
+
+      // 2. Exact name match
+      if (!match) match = existing.find((c) => c.name.toLowerCase() === sc.name.toLowerCase());
+
+      // 3. Best word-overlap match (to reuse existing category + its products)
+      if (!match) {
+        const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter(Boolean);
+        const scWords = slugify(sc.name);
+        let bestScore = 0;
+        for (const c of existing) {
+          const cWords = slugify(c.name);
+          const overlap = scWords.filter((w) => cWords.includes(w)).length;
+          if (overlap > bestScore) {
+            bestScore = overlap;
+            match = c;
+          }
+        }
+        // Only use word match if at least 1 word overlaps
+        if (bestScore === 0) match = null;
+      }
+
+      if (match) {
+        // Update existing category to match static catalog (keeps same ID, so products stay linked)
+        if (match.name !== sc.name || match.slug !== sc.slug) {
+          await db.update(categories).set({ name: sc.name, slug: sc.slug }).where(eq(categories.id, match.id));
           updated++;
         }
       } else {
-        // Check if a DB category has the same name (just needs slug updated)
-        const byName = existingByName.get(sc.name.toLowerCase());
-        if (byName) {
-          await db.update(categories).set({ slug: sc.slug }).where(eq(categories.id, byName.id));
-          updated++;
-        } else {
-          // Brand new category
-          await db.insert(categories).values({ name: sc.name, slug: sc.slug });
-          created++;
-        }
+        // Truly new category
+        await db.insert(categories).values({ name: sc.name, slug: sc.slug });
+        created++;
       }
     }
 
