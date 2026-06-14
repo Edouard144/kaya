@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { categories as staticCategories } from "@/data/catalog";
-import { listCategories, listPublicProducts } from "@/lib/fns/products";
+import { listCategories, listPublicProducts, syncCategories } from "@/lib/fns/products";
 import { formatUSD } from "@/lib/shopify";
 
 export const Route = createFileRoute("/category/$slug")({
@@ -18,18 +19,18 @@ export const Route = createFileRoute("/category/$slug")({
       ],
     };
   },
-  notFoundComponent: () => (
-    <div className="container-page py-24 text-center">
-      <h1 className="font-display text-4xl">Category not found</h1>
-      <p className="mt-3 text-muted-foreground">This category doesn't exist yet.</p>
-      <Link to="/products" className="btn-primary mt-6 inline-flex">Browse catalog</Link>
-    </div>
-  ),
   component: CategoryPage,
 });
 
+function slugify(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 function CategoryPage() {
   const { slug } = Route.useParams();
+  const qc = useQueryClient();
+  const [synced, setSynced] = useState(false);
+
   const staticCategory = staticCategories.find((x) => x.slug === slug);
 
   const { data: dbCategories, isLoading: catsLoading } = useQuery({
@@ -37,31 +38,42 @@ function CategoryPage() {
     queryFn: () => listCategories(),
   });
 
-  // Match DB category: exact slug → slugified name → first-word overlap
+  // Match DB category
   const matchedCategory = (() => {
     if (!dbCategories) return null;
     const bySlug = dbCategories.find((c) => c.slug === slug);
     if (bySlug) return bySlug;
     if (staticCategory) {
-      const byName = dbCategories.find(
-        (c) => c.name.toLowerCase() === staticCategory.name.toLowerCase()
-      );
-      if (byName) return byName;
+      const match = dbCategories.find((c) => slugify(c.name) === slugify(staticCategory.name));
+      if (match) return match;
     }
-    const words = slug.split("-").filter((w) => w.length > 3);
-    return dbCategories.find((c) => {
-      const name = c.name.toLowerCase();
-      return words.some((w) => name.includes(w));
-    }) ?? null;
+    return null;
   })();
 
-  const { data: dbProducts, isLoading: productsLoading } = useQuery({
-    queryKey: ["public-products-category", matchedCategory?.id],
-    queryFn: () => listPublicProducts({ data: { categoryId: matchedCategory!.id } }),
-    enabled: !!matchedCategory,
+  // Auto-sync if no match and categories loaded
+  const syncMut = useMutation({
+    mutationFn: () => syncCategories(),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["public-categories"] });
+      setSynced(true);
+    },
   });
 
-  const isLoading = catsLoading;
+  useEffect(() => {
+    if (!catsLoading && dbCategories && !matchedCategory && !synced && !syncMut.isPending) {
+      syncMut.mutate();
+    }
+  }, [catsLoading, dbCategories, matchedCategory, synced]);
+
+  const categoryId = matchedCategory?.id ?? null;
+
+  const { data: dbProducts, isLoading: productsLoading } = useQuery({
+    queryKey: ["public-products-category", categoryId],
+    queryFn: () => listPublicProducts({ data: { categoryId: categoryId! } }),
+    enabled: !!categoryId,
+  });
+
+  const isLoading = catsLoading || syncMut.isPending;
   const categoryName = matchedCategory?.name || staticCategory?.name || slug.replace(/-/g, " ");
   const categoryDescription = staticCategory?.blurb || "";
   const categoryImage = staticCategory?.cover || null;
@@ -71,7 +83,7 @@ function CategoryPage() {
     return (
       <div className="container-page py-24 text-center">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-terracotta border-t-transparent" />
-        <p className="mt-4 text-muted-foreground">Loading category…</p>
+        <p className="mt-4 text-muted-foreground">{syncMut.isPending ? "Setting up categories…" : "Loading category…"}</p>
       </div>
     );
   }
@@ -87,7 +99,6 @@ function CategoryPage() {
 
   return (
     <div>
-      {/* hero */}
       <section className="container-page pt-8">
         <div className="relative overflow-hidden rounded-[28px] border border-line/60 shadow-warm">
           {categoryImage ? (
@@ -112,7 +123,6 @@ function CategoryPage() {
         </div>
       </section>
 
-      {/* products */}
       <section className="container-page pb-16">
         <div className="mb-6 flex items-end justify-between">
           <h2 className="font-display text-3xl md:text-4xl">Products</h2>
@@ -174,7 +184,6 @@ function CategoryPage() {
         )}
       </section>
 
-      {/* related categories */}
       <section className="container-page pb-24">
         <h3 className="font-display text-2xl">Other categories</h3>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

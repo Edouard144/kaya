@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useRef, useCallback, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, ArrowRight } from "lucide-react";
 import { formatUSD } from "@/lib/shopify";
@@ -25,6 +25,21 @@ function Catalog() {
   const { q, categoryId } = Route.useSearch();
   const navigate = Route.useNavigate();
   const selectedCategoryId = categoryId;
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [localSearch, setLocalSearch] = useState(q);
+
+  // Sync local search when URL changes externally
+  useEffect(() => {
+    setLocalSearch(q);
+  }, [q]);
+
+  const debouncedSearch = useCallback((val: string) => {
+    setLocalSearch(val);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      navigate({ search: (prev) => ({ ...prev, q: val || undefined }) });
+    }, 300);
+  }, [navigate]);
 
   const { data: dbProducts, isLoading } = useQuery({
     queryKey: ["public-products", q, selectedCategoryId],
@@ -72,8 +87,8 @@ function Catalog() {
         <div className="flex w-full max-w-md items-center gap-2 rounded-full border border-line bg-surface px-4 py-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
-            defaultValue={q}
-            onChange={(e) => navigate({ search: (prev) => ({ ...prev, q: e.target.value || undefined }) })}
+            value={localSearch}
+            onChange={(e) => debouncedSearch(e.target.value)}
             placeholder="Search towels, beds, lighting…"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
