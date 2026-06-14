@@ -40,47 +40,80 @@ export const syncCategories = createServerFn({ method: "POST" })
   .handler(async () => {
     const existing = await db.select().from(categories);
 
+    const stem = (w: string) => w.toLowerCase().replace(/(ings?|es|s)$/, "");
+    const tokenize = (s: string) =>
+      s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter(Boolean);
+
+    // Pre-count products per category
+    const productCounts = new Map<string, number>();
+    for (const c of existing) {
+      const [row] = await db.select({ cnt: sql<number>`count(*)::int` }).from(products).where(eq(products.categoryId, c.id));
+      productCounts.set(c.id, row?.cnt ?? 0);
+    }
+
     let created = 0;
     let updated = 0;
+    let merged = 0;
+    const usedIds = new Set<string>();
 
     for (const sc of staticCategories) {
-      // 1. Exact slug match
-      let match = existing.find((c) => c.slug === sc.slug);
+      // Collect ALL candidates that match this static category
+      const candidates: { cat: (typeof existing)[number]; score: number }[] = [];
 
-      // 2. Exact name match
-      if (!match) match = existing.find((c) => c.name.toLowerCase() === sc.name.toLowerCase());
-
-      // 3. Best word-overlap match (to reuse existing category + its products)
-      if (!match) {
-        const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter(Boolean);
-        const scWords = slugify(sc.name);
-        let bestScore = 0;
-        for (const c of existing) {
-          const cWords = slugify(c.name);
-          const overlap = scWords.filter((w) => cWords.includes(w)).length;
-          if (overlap > bestScore) {
-            bestScore = overlap;
-            match = c;
-          }
+      for (const c of existing) {
+        let score = 0;
+        if (c.slug === sc.slug) score = 1000; // exact slug wins
+        else if (c.name.toLowerCase() === sc.name.toLowerCase()) score = 999;
+        else {
+          const scWords = tokenize(sc.name).map(stem);
+          const cWords = tokenize(c.name).map(stem);
+          score = scWords.filter((w) => cWords.includes(w)).length;
         }
-        // Only use word match if at least 1 word overlaps
-        if (bestScore === 0) match = null;
+        if (score > 0) candidates.push({ cat: c, score });
       }
 
-      if (match) {
-        // Update existing category to match static catalog (keeps same ID, so products stay linked)
-        if (match.name !== sc.name || match.slug !== sc.slug) {
-          await db.update(categories).set({ name: sc.name, slug: sc.slug }).where(eq(categories.id, match.id));
+      // Sort: highest score first, then most products on ties
+      candidates.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (productCounts.get(b.cat.id) ?? 0) - (productCounts.get(a.cat.id) ?? 0);
+      });
+
+      if (candidates.length > 0) {
+        const winner = candidates[0];
+        usedIds.add(winner.cat.id);
+
+        // Update name/slug if needed
+        if (winner.cat.name !== sc.name || winner.cat.slug !== sc.slug) {
+          await db.update(categories).set({ name: sc.name, slug: sc.slug }).where(eq(categories.id, winner.cat.id));
           updated++;
         }
+
+        // Merge products from losing candidates into the winner
+        for (let i = 1; i < candidates.length; i++) {
+          const loser = candidates[i];
+          usedIds.add(loser.cat.id);
+          if ((productCounts.get(loser.cat.id) ?? 0) > 0) {
+            await db.update(products).set({ categoryId: winner.cat.id }).where(eq(products.categoryId, loser.cat.id));
+            merged++;
+          }
+        }
       } else {
-        // Truly new category
-        await db.insert(categories).values({ name: sc.name, slug: sc.slug });
+        const inserted = await db.insert(categories).values({ name: sc.name, slug: sc.slug }).returning();
+        if (inserted[0]) usedIds.add(inserted[0].id);
         created++;
       }
     }
 
-    return { created, updated, total: staticCategories.length };
+    // Delete orphaned categories with no products
+    let deleted = 0;
+    for (const c of existing) {
+      if (!usedIds.has(c.id) && (productCounts.get(c.id) ?? 0) === 0) {
+        await db.delete(categories).where(eq(categories.id, c.id));
+        deleted++;
+      }
+    }
+
+    return { created, updated, merged, deleted, total: staticCategories.length };
   });
 
 export const getCategoryBySlug = createServerFn({ method: "GET" })
