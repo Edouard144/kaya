@@ -157,10 +157,6 @@ function About() {
               name: "Motels & Guesthouses",
               desc: "Efficient, durable spec for high-turnover operations.",
             },
-            {
-              name: "Restaurants",
-              desc: "Kitchen equipment, tabletop and front-of-house furnishings.",
-            },
           ].map(({ name, desc }) => (
             <div key={name} className="surface-card p-5">
               <div className="font-display text-lg">{name}</div>

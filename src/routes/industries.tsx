@@ -8,13 +8,13 @@ export const Route = createFileRoute("/industries")({
       {
         name: "description",
         content:
-          "Kaya supplies hotels, resorts, serviced apartments, restaurants, hospitals, schools and offices worldwide.",
+          "Kaya supplies hotels, resorts, serviced apartments, hospitals and offices worldwide.",
       },
       { property: "og:title", content: "Industries — Kaya" },
       {
         property: "og:description",
         content:
-          "Hotels, resorts, apartments, restaurants, hospitals, schools, offices — all outfitted by Kaya.",
+          "Hotels, resorts, apartments, hospitals, offices — all outfitted by Kaya.",
       },
     ],
   }),

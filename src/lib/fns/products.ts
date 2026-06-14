@@ -75,29 +75,35 @@ export const getCategoryBySlug = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { slug } = data;
 
-    // 1. Exact slug match
-    const bySlug = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
-    if (bySlug.length > 0) return bySlug[0];
+    try {
+      // 1. Exact slug match
+      const bySlug = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
+      if (bySlug.length > 0) return bySlug[0];
 
-    // 2. Find static category by slug, then match DB by name
-    const staticCat = staticCategories.find((c) => c.slug === slug);
-    if (staticCat) {
-      const byName = await db.select().from(categories).where(eq(categories.name, staticCat.name)).limit(1);
-      if (byName.length > 0) {
-        // Update slug to match for next time
-        await db.update(categories).set({ slug }).where(eq(categories.id, byName[0].id));
-        return byName[0];
+      // 2. Find static category by slug, then match DB by name
+      const staticCat = staticCategories.find((c) => c.slug === slug);
+      if (staticCat) {
+        const all = await db.select().from(categories);
+        const match = all.find((c) => c.name.toLowerCase() === staticCat.name.toLowerCase());
+        if (match) {
+          // Update slug to match for next time
+          await db.update(categories).set({ slug }).where(eq(categories.id, match.id));
+          return match;
+        }
       }
+
+      // 3. Slugify each DB category name and compare
+      if (!staticCat) {
+        const all = await db.select().from(categories);
+        const slugified = all.find((c) =>
+          c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === slug
+        );
+        if (slugified) return slugified;
+      }
+    } catch (e) {
+      console.error("[getCategoryBySlug] error:", e);
     }
 
-    // 3. Slugify each DB category name and compare
-    const all = await db.select().from(categories);
-    const slugified = all.find((c) =>
-      c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === slug
-    );
-    if (slugified) return slugified;
-
-    // 4. No match
     return null;
   });
 

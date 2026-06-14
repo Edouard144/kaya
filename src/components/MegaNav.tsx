@@ -8,9 +8,7 @@ import {
   X,
   FileText,
   Building2,
-  UtensilsCrossed,
   Bed,
-  GraduationCap,
   HeartPulse,
   Briefcase,
   Palmtree,
@@ -31,9 +29,7 @@ const INDUSTRIES = [
   { name: "Hotels", desc: "Boutique to flagship full fit-outs", icon: Building2 },
   { name: "Resorts", desc: "Pool, beach, grounds and rooms", icon: Palmtree },
   { name: "Serviced Apartments", desc: "Move-in-ready packages per unit", icon: Bed },
-  { name: "Restaurants", desc: "Kitchen, dining and service", icon: UtensilsCrossed },
   { name: "Hospitals", desc: "Furniture and consumables at scale", icon: HeartPulse },
-  { name: "Schools", desc: "Dorm, classroom and dining", icon: GraduationCap },
   { name: "Offices", desc: "Reception, lounge and meeting", icon: Briefcase },
 ];
 
