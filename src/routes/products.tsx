@@ -41,19 +41,34 @@ function Catalog() {
     }, 300);
   }, [navigate]);
 
-  const { data: dbProducts, isLoading } = useQuery({
-    queryKey: ["public-products", q, selectedCategoryId],
-    queryFn: () => listPublicProducts({
-      data: {
-        search: q.trim() || undefined,
-        categoryId: selectedCategoryId || undefined,
-      },
-    }),
-  });
-
   const { data: dbCategories } = useQuery({
     queryKey: ["public-categories"],
     queryFn: () => listCategories(),
+  });
+
+  // When a category filter is selected, also find related DB categories (stemmed word overlap)
+  const expandedCategoryIds = useMemo(() => {
+    if (!selectedCategoryId || !dbCategories?.length) return selectedCategoryId ? [selectedCategoryId] : [];
+    const selected = dbCategories.find((c) => c.id === selectedCategoryId);
+    if (!selected) return [selectedCategoryId];
+    const stem = (w: string) => w.toLowerCase().replace(/(ings?|es|s)$/, "");
+    const tokenize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter(Boolean);
+    const selWords = tokenize(selected.name).map(stem);
+    const related = dbCategories.filter((c) => {
+      const catWords = tokenize(c.name).map(stem);
+      return selWords.some((w) => catWords.includes(w));
+    }).map((c) => c.id);
+    return related.length ? related : [selectedCategoryId];
+  }, [selectedCategoryId, dbCategories]);
+
+  const { data: dbProducts, isLoading } = useQuery({
+    queryKey: ["public-products", q, expandedCategoryIds],
+    queryFn: () => listPublicProducts({
+      data: {
+        search: q.trim() || undefined,
+        categoryIds: expandedCategoryIds.length > 0 ? expandedCategoryIds : undefined,
+      },
+    }),
   });
 
   // Group products by category

@@ -217,7 +217,7 @@ function Dashboard() {
   const syncCategoriesMut = useMutation({
     mutationFn: () => syncCategories(),
     onSuccess: (result) => {
-      toast.success(`Synced categories: ${result.created} created, ${result.updated} updated`);
+      toast.success(`Synced: ${result.created} created, ${result.updated} updated, ${result.merged} merged, ${result.deleted} deleted`);
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
       qc.invalidateQueries({ queryKey: ["public-categories"] });
     },

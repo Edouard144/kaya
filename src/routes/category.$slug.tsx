@@ -50,6 +50,20 @@ function CategoryPage() {
     return null;
   })();
 
+  // Find ALL related DB categories (share words with the static category) to include their products
+  const relatedCategoryIds = (() => {
+    if (!dbCategories || !staticCategory) return [];
+    const stem = (w: string) => w.toLowerCase().replace(/(ings?|es|s)$/, "");
+    const tokenize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter(Boolean);
+    const staticWords = tokenize(staticCategory.name).map(stem);
+    return dbCategories
+      .filter((c) => {
+        const catWords = tokenize(c.name).map(stem);
+        return staticWords.some((w) => catWords.includes(w));
+      })
+      .map((c) => c.id);
+  })();
+
   // Auto-sync if no match and categories loaded
   const syncMut = useMutation({
     mutationFn: () => syncCategories(),
@@ -68,9 +82,13 @@ function CategoryPage() {
   const categoryId = matchedCategory?.id ?? null;
 
   const { data: dbProducts, isLoading: productsLoading } = useQuery({
-    queryKey: ["public-products-category", categoryId],
-    queryFn: () => listPublicProducts({ data: { categoryId: categoryId! } }),
-    enabled: !!categoryId,
+    queryKey: ["public-products-category", relatedCategoryIds.length ? relatedCategoryIds : categoryId],
+    queryFn: () => listPublicProducts({
+      data: relatedCategoryIds.length
+        ? { categoryIds: relatedCategoryIds }
+        : { categoryId: categoryId! },
+    }),
+    enabled: !!(categoryId || relatedCategoryIds.length),
   });
 
   const isLoading = catsLoading || syncMut.isPending;

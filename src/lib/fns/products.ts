@@ -61,6 +61,7 @@ export const syncCategories = createServerFn({ method: "POST" })
       const candidates: { cat: (typeof existing)[number]; score: number }[] = [];
 
       for (const c of existing) {
+        if (usedIds.has(c.id)) continue; // already claimed by a previous static category
         let score = 0;
         if (c.slug === sc.slug) score = 1000; // exact slug wins
         else if (c.name.toLowerCase() === sc.name.toLowerCase()) score = 999;
@@ -155,10 +156,10 @@ export const getCategoryBySlug = createServerFn({ method: "GET" })
 
 export const listPublicProducts = createServerFn({ method: "GET" })
   .inputValidator(
-    (data: { search?: string; categoryId?: string } | undefined) => data ?? {},
+    (data: { search?: string; categoryId?: string; categoryIds?: string[] } | undefined) => data ?? {},
   )
   .handler(async ({ data }) => {
-    const { search, categoryId } = data;
+    const { search, categoryId, categoryIds } = data;
 
     let query = db
       .select({
@@ -184,8 +185,11 @@ export const listPublicProducts = createServerFn({ method: "GET" })
     if (search) {
       conditions.push(like(products.name, `%${search}%`));
     }
-    if (categoryId) {
-      conditions.push(eq(products.categoryId, categoryId));
+    const ids = categoryIds?.length ? categoryIds : categoryId ? [categoryId] : [];
+    if (ids.length === 1) {
+      conditions.push(eq(products.categoryId, ids[0]));
+    } else if (ids.length > 1) {
+      conditions.push(sql`${products.categoryId} IN ${ids}`);
     }
 
     const combined = conditions.reduce((a, b) => sql`${a} AND ${b}`);
@@ -212,7 +216,25 @@ export const getProduct = createServerFn({ method: "GET" })
 export const getProductBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }) => {
-    const result = await db.select().from(products).where(eq(products.slug, data.slug)).limit(1);
+    const result = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        description: products.description,
+        price: products.price,
+        image: products.image,
+        stock: products.stock,
+        isActive: products.isActive,
+        categoryId: products.categoryId,
+        createdAt: products.createdAt,
+        categoryName: categories.name,
+        categorySlug: categories.slug,
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(eq(products.slug, data.slug))
+      .limit(1);
     const product = result[0];
     if (!product) return null;
 
