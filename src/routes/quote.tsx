@@ -146,7 +146,7 @@ function QuotePage() {
             </div>
             <div>
               <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Email us</div>
-              <div className="mt-0.5 text-sm font-medium">edouardtuyubahe@gmail.com</div>
+              <div className="mt-0.5 text-sm font-medium">kayahotels@gmail.com</div>
             </div>
           </a>
           <a
