@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "@/db";
 import { products, productImages, categories } from "@/db/schema";
-import { eq, like, desc, sql } from "drizzle-orm";
+import { eq, ilike, like, desc, sql } from "drizzle-orm";
 import { categories as staticCategories } from "@/data/catalog";
 import {
   createShopifyProduct,
@@ -25,7 +25,7 @@ export const listProducts = createServerFn({ method: "GET" })
       return db
         .select()
         .from(products)
-        .where(like(products.name, `%${search}%`))
+        .where(ilike(products.name, `%${search}%`))
         .orderBy(desc(products.createdAt));
     }
     return db.select().from(products).orderBy(desc(products.createdAt));
@@ -183,7 +183,7 @@ export const listPublicProducts = createServerFn({ method: "GET" })
 
     const conditions = [eq(products.isActive, true)];
     if (search) {
-      conditions.push(like(products.name, `%${search}%`));
+      conditions.push(ilike(products.name, `%${search}%`));
     }
     const ids = categoryIds?.length ? categoryIds : categoryId ? [categoryId] : [];
     if (ids.length === 1) {
