@@ -17,6 +17,9 @@ import { Footer } from "../components/Footer";
 import { useInitTheme } from "../components/ThemeSwitcher";
 import { Toaster } from "sonner";
 
+// TEMP: deployment test
+throw new Error("Deployment test — intentionally broken");
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center bg-background px-4">
