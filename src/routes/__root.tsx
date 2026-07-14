@@ -17,8 +17,7 @@ import { Footer } from "../components/Footer";
 import { useInitTheme } from "../components/ThemeSwitcher";
 import { Toaster } from "sonner";
 
-// TEMP: deployment test
-throw new Error("Deployment test — intentionally broken");
+
 
 function NotFoundComponent() {
   return (
